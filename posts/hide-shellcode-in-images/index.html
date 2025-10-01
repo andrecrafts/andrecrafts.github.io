@@ -1,0 +1,691 @@
+<!DOCTYPE html><html lang="en" data-mode="dark" class="scroll-smooth" data-astro-cid-ouamjn2i> <head><!-- Basic Meta Tags --><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="Astro v5.14.1"><!-- Icons & Links --><link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg"><link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png"><link rel="manifest" href="/favicon/site.webmanifest"><link rel="sitemap" href="/sitemap-index.xml"><!-- Page Title & Description --><title>Hiding Shellcode in Images with Python and C/C++</title><meta name="description" content="Learn how to hide shellcode payloads in plain sight by embedding them into image files, such as PNGs, using Python."><!-- Social Media / Open Graph Tags --><meta property="og:title" content="Hiding Shellcode in Images with Python and C/C++ | AndreCrafts"><meta property="og:description" content="Learn how to hide shellcode payloads in plain sight by embedding them into image files, such as PNGs, using Python."><meta property="og:type" content="website"><meta property="og:url" content="https://andrecrafts.com/posts/hide-shellcode-in-images/"><meta property="og:image" content="https://andrecrafts.com/posts/hide-shellcode-in-images/heroImages/hiding_shellcode_in_Images.png"><meta property="twitter:card" content="summary_large_image"><link rel="stylesheet" href="/_astro/about.EpLGMvxz.css">
+<style>@font-face{font-family:Inter;src:url(/fonts/Inter.ttf) format("truetype-variations");font-weight:100 900;font-display:swap;font-style:normal}@font-face{font-family:Montserrat;src:url(/fonts/Montserrat.ttf) format("truetype-variations");font-weight:100 900;font-display:swap;font-style:normal}header[data-astro-cid-3ef6ksr2]#main-header[aria-expanded=true],header[data-astro-cid-3ef6ksr2]#main-header[data-scrolled=true]{background-color:color-mix(in srgb,var(--colors-header) var(--un-bg-opacity),transparent);transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,--un-gradient-from,--un-gradient-via,--un-gradient-to;transition-timing-function:var(--un-ease, var(--default-transition-timingFunction));transition-duration:var(--un-duration, var(--default-transition-duration));--un-duration:.3s;transition-duration:.3s}@property --un-bg-opacity,@property --un-bg-opacity{syntax:"<percentage>";inherits:false;initial-value:100%;}@supports (color: color-mix(in lab,red,red)){header[data-astro-cid-3ef6ksr2]#main-header[aria-expanded=true],header[data-astro-cid-3ef6ksr2]#main-header[data-scrolled=true]{background-color:color-mix(in oklab,var(--colors-header) var(--un-bg-opacity),transparent)}}a[data-astro-cid-3ef6ksr2][aria-current=page]{color:color-mix(in srgb,var(--colors-sky-500) var(--un-text-opacity),transparent)}@supports (color: color-mix(in lab,red,red)){a[data-astro-cid-3ef6ksr2][aria-current=page]{color:color-mix(in oklab,var(--colors-sky-500) var(--un-text-opacity),transparent)}}.highlight-btn[data-astro-cid-sz7xmlte]:hover{color:color-mix(in srgb,var(--colors-sky-400) var(--un-text-opacity),transparent)}@property --un-text-opacity{syntax:"<percentage>";inherits:false;initial-value:100%;}@supports (color: color-mix(in lab,red,red)){.highlight-btn[data-astro-cid-sz7xmlte]:hover{color:color-mix(in oklab,var(--colors-sky-400) var(--un-text-opacity),transparent)}}.tooltip-arrow[data-astro-cid-sz7xmlte]{background-color:color-mix(in srgb,var(--colors-secondary-accent) var(--un-bg-opacity),transparent);clip-path:polygon(50% 100%,0 0,100% 0)}@property --un-bg-opacity{syntax:"<percentage>";inherits:false;initial-value:100%;}@supports (color: color-mix(in lab,red,red)){.tooltip-arrow[data-astro-cid-sz7xmlte]{background-color:color-mix(in oklab,var(--colors-secondary-accent) var(--un-bg-opacity),transparent)}}:root{@media (min-width: 1024px){font-size:1.27rem}--background: hsl(214, 44%, 8%)}html{scroll-padding-top:3rem}
+</style>
+<link rel="stylesheet" href="/_astro/_slug_.DaiWKfaw.css">
+<style>.title-clamp[data-astro-cid-r7kjq4ip]{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}.description-clamp[data-astro-cid-r7kjq4ip]{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;overflow-wrap:anywhere}.hide-scrollbar[data-astro-cid-oyovcjtc]{scrollbar-width:thin;scrollbar-color:transparent transparent}.dot[data-astro-cid-oyovcjtc].active{background-color:color-mix(in srgb,var(--colors-sky-500) var(--un-bg-opacity),transparent)}@property --un-bg-opacity{syntax:"<percentage>";inherits:false;initial-value:100%;}@supports (color: color-mix(in lab,red,red)){.dot[data-astro-cid-oyovcjtc].active{background-color:color-mix(in oklab,var(--colors-sky-500) var(--un-bg-opacity),transparent)}}@media (min-width: 768px){.dot[data-astro-cid-oyovcjtc]:nth-child(n+3){display:none}}
+.img-class[data-astro-cid-qqdm6bys]{cursor:pointer;transition:opacity .2s ease-in-out}.img-class[data-astro-cid-qqdm6bys]:hover{opacity:.85}
+</style><style>video[data-astro-cid-rk4szbjr]{max-width:100%;height:auto;margin-block:1.5rem;border-radius:.5rem;display:block}
+</style></head> <body class="bg-background text-white font-sans selection:bg-sky-500 selection:text-white" data-astro-cid-ouamjn2i> <header id="main-header" data-scrolled="true" class="sticky top-0 z-50" data-astro-cid-3ef6ksr2> <div class="mx-auto px-4 py-1" data-astro-cid-3ef6ksr2> <div class="flex items-center justify-between -ml-1" data-astro-cid-3ef6ksr2> <!-- Logo --> <a href="/" class="flex items-center gap-1" data-astro-cid-3ef6ksr2> <img src="/images/logo.png" alt="AndreCrafts Logo" class="h-10 w-10 object-contain" data-astro-cid-3ef6ksr2> <span class="text-xl font-bold font-display text-white" data-astro-cid-3ef6ksr2>
+AndreCrafts
+</span> </a> <nav id="menu" class="
+  bg-header absolute top-full left-0 w-full 
+  border-t-1 border-white 
+  hidden flex-col gap-4 p-4
+  md:flex md:static md:w-auto md:bg-transparent
+  md:border-t-0 md:flex-row md:items-center md:gap-8 md:p-0 " data-astro-cid-3ef6ksr2> <a href="/#services" class="text-white
+           hover:text-sky-500 transition-colors duration-300" aria-current="false" data-astro-cid-3ef6ksr2> Services </a><a href="/work" class="text-white
+           hover:text-sky-500 transition-colors duration-300" aria-current="false" data-astro-cid-3ef6ksr2> Work </a><a href="/about" class="text-white
+           hover:text-sky-500 transition-colors duration-300" aria-current="false" data-astro-cid-3ef6ksr2> About </a> <a href="/#contact" class="
+  text-center text-white font-bold px-3 py-1.5 rounded-md 
+  bg-[linear-gradient(to_top_right,theme(colors.cyan.500),theme(colors.blue.600))] 
+  hover:bg-[linear-gradient(to_top_right,theme(colors.cyan.400),theme(colors.blue.500))] 
+  transition-all duration-300
+" data-astro-cid-3ef6ksr2>
+Contact
+</a> </nav> <!-- Mobile Menu Button (Hamburger) --> <button id="mobile-menu-button" class="cursor-pointer text-white md:hidden" aria-controls="mobile-menu" aria-expanded="false" aria-label="Open main menu" data-astro-cid-3ef6ksr2> <svg class="h-6 w-6" id="hamburger-icon" data-astro-cid-3ef6ksr2="true" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"></path> </svg> <svg class="h-6 w-6 hidden" id="close-icon" data-astro-cid-3ef6ksr2="true" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path> </svg> </button> </div> </div> </header> <script type="module">function t(){const i=window.location.pathname,s=window.location.hash;document.querySelectorAll("#menu a").forEach(n=>{const o=new URL(n.href),r=o.pathname,a=o.hash;if(a==="#contact")return;let e=!1;a?e=a===s:r==="/"?e=i==="/":e=i===r,e?n.setAttribute("aria-current","page"):n.removeAttribute("aria-current")})}document.addEventListener("DOMContentLoaded",t);window.addEventListener("hashchange",t);window.addEventListener("urlchange",t);window.addEventListener("popstate",t);</script>  <script type="module">const e=document.getElementById("mobile-menu-button"),t=document.getElementById("menu"),i=document.getElementById("hamburger-icon"),d=document.getElementById("close-icon"),o=document.getElementById("main-header");function c(){if(!t||!i||!d||!e||!o)return;t.classList.toggle("hidden"),t.classList.toggle("flex"),i.classList.toggle("hidden"),d.classList.toggle("hidden");const n=e.getAttribute("aria-expanded")==="true";e.setAttribute("aria-expanded",String(!n)),o.setAttribute("aria-expanded",String(!n))}e&&t&&i&&d&&o&&(e.addEventListener("click",c),t.querySelectorAll("a").forEach(s=>{s.addEventListener("click",()=>{e.getAttribute("aria-expanded")==="true"&&c()})}));</script>  <main data-astro-cid-ouamjn2i> <!-- The content of the page will be injected here -->  <div id="content-div" class="max-w-7xl mx-auto pt-4 px-4 lg:px-0 lg:ml-[17%] lg:grid lg:grid-cols-12 lg:gap-x-12" data-astro-cid-scuu7fyy> <article class="lg:col-span-7" data-astro-cid-scuu7fyy> <header data-astro-cid-scuu7fyy> <h1 class="text-3xl md:text-4xl mb-2 font-semibold" data-astro-cid-scuu7fyy>Hiding Shellcode in Images with Python and C/C++</h1> <h3 class="mb-4 wrap-anywhere" data-astro-cid-scuu7fyy>Learn how to hide shellcode payloads in plain sight by embedding them into image files, such as PNGs, using Python.</h3> <div class="w-full aspect-[204/100] 
+rounded-lg bg-black mb-2 overflow-hidden flex justify-center items-center" data-astro-cid-scuu7fyy> <!-- If scale exists, then apply the img-class class --><img src="/_astro/hiding_shellcode_in_Images.DZ1-0QCA_Z2a1HO.png" alt="Hero image for Hiding Shellcode in Images with Python and C/C++" data-astro-cid-scuu7fyy="true" data-full-src="/_astro/hiding_shellcode_in_Images.DZ1-0QCA.png" data-astro-cid-qqdm6bys="true" loading="lazy" decoding="async" fetchpriority="auto" width="1286" height="630" class="h-full w-auto object-cover img-class">  </div> <div class="text-sm text-subtle-gray mb-6 flex flex-wrap justify-between gap-x-4 gap-y-2 " data-astro-cid-scuu7fyy> <span class="" data-astro-cid-scuu7fyy>Posted <span class="font-semibold text-slate-300" data-astro-cid-scuu7fyy>17 Dec 2024</span></span> <span data-astro-cid-scuu7fyy>By <a class="font-semibold text-slate-300 hover:text-sky-500 hover:underline" href="/about" data-astro-cid-scuu7fyy>André Oliveira</a></span> </div> <!-- Project --> <div class="md:text-lg flex flex-row justify-left items-center gap-2 mb-6 text-sky-500" data-astro-cid-scuu7fyy> <a href="https://github.com/andrecrafts/hide-payload-in-images" target="_blank" rel="noopener noreferrer" class="font-semibold hover:text-sky-400 hover:underline transition-colors flex items-center gap-1.5" data-astro-cid-scuu7fyy> <svg class="w-6 h-auto" data-astro-cid-scuu7fyy="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"> <g transform="translate(12, 12) scale(0.98) translate(-12, -12)"> <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path> </g> </svg> <span data-astro-cid-scuu7fyy>GitHub</span> </a> <div id="share-trigger" class="cursor-pointer font-semibold flex items-center gap-1 hover:text-sky-400 hover:underline transition-colors " data-astro-cid-scuu7fyy> <svg class="w-6 h-auto" data-astro-cid-scuu7fyy="true" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g fill="currentColor"> <path d="M6.746704,4 L10.2109085,4 C10.625122,4 10.9609085,4.33578644 10.9609085,4.75 C10.9609085,5.12969577 10.6787546,5.44349096 10.312679,5.49315338 L10.2109085,5.5 L6.746704,5.5 C5.55584001,5.5 4.58105908,6.42516159 4.50189481,7.59595119 L4.496704,7.75 L4.496704,17.25 C4.496704,18.440864 5.42186559,19.4156449 6.59265519,19.4948092 L6.746704,19.5 L16.247437,19.5 C17.438301,19.5 18.4130819,18.5748384 18.4922462,17.4040488 L18.497437,17.25 L18.497437,16.752219 C18.497437,16.3380054 18.8332234,16.002219 19.247437,16.002219 C19.6271328,16.002219 19.940928,16.2843728 19.9905904,16.6504484 L19.997437,16.752219 L19.997437,17.25 C19.997437,19.2542592 18.4250759,20.8912737 16.4465956,20.994802 L16.247437,21 L6.746704,21 C4.74244483,21 3.10543026,19.4276389 3.00190201,17.4491586 L2.996704,17.25 L2.996704,7.75 C2.996704,5.74574083 4.56906505,4.10872626 6.54754543,4.00519801 L6.746704,4 L10.2109085,4 L6.746704,4 Z M14.5006976,6.51985416 L14.5006976,3.75 C14.5006976,3.12602964 15.20748,2.7899466 15.6876724,3.13980165 L15.7698701,3.20874226 L21.7644714,8.95874226 C22.0442311,9.22708681 22.0696965,9.65811353 21.8408438,9.95607385 L21.7645584,10.0411742 L15.7699571,15.7930263 C15.3196822,16.2250675 14.5877784,15.9476738 14.5078455,15.3589039 L14.5006976,15.2518521 L14.5006976,12.5265324 L14.1572053,12.5566444 C11.7575155,12.8069657 9.45747516,13.8878535 7.24265269,15.8173548 C6.72354372,16.2695904 5.9204142,15.8420034 6.00578894,15.1588473 C6.67057872,9.83929778 9.45245108,6.90729635 14.2013326,6.53950096 L14.5006976,6.51985416 L14.5006976,3.75 L14.5006976,6.51985416 Z M16.0006976,5.50864341 L16.0006976,7.25 C16.0006976,7.66421356 15.6649111,8 15.2506976,8 C11.3772927,8 8.97667396,9.67612932 7.93942891,13.1571821 L7.86037164,13.4357543 L8.21256044,13.1989337 C10.4490427,11.7371925 12.7984587,11 15.2506976,11 C15.6303934,11 15.9441885,11.2821539 15.993851,11.6482294 L16.0006976,11.75 L16.0006976,13.4928166 L20.1619348,9.50008715 L16.0006976,5.50864341 Z" id="🎨-Color"></path> </g> </g> </svg>
+Share
+</div>  </div> </header> <hr class="mt-6 mb-6 border-gray-700" data-astro-cid-scuu7fyy> <!-- ToC Button section --> <button id="toc-trigger" class="flex items-center gap-1 lg:hidden mb-6 cursor-pointer font-semibold py-2 pl-4 pr-2 rounded-md bg-secondary-accent hover:bg-white/20 transition-colors" data-astro-cid-scuu7fyy>
+Table of Contents
+<svg class="w-5 h-auto rotate-180" data-astro-cid-scuu7fyy="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path> </svg> </button> <!-- Content sections --> <div class="content-style " data-astro-cid-scuu7fyy>  <h2 id="introduction">Introduction</h2>
+<p>In this post, I will demonstrate how to hide a shellcode payload in an image file using Python and retrieve it using C/C++. I will use <strong>PNG files</strong> as an example.</p>
+<p>PNG files use an <strong>IEND chunk</strong> to mark the end of image data. Any bytes appended <em>after</em> this chunk do not affect the file’s integrity or visual appearance, making it possible to hide payloads.</p>
+<p>This technique leverages <code>end-of-file</code> markers, allowing data to be hidden in any image format with a similar structure, not just PNG files.</p>
+<p>With this method, you can hide encrypted shellcode for discreet payload execution or secretly store sensitive information, such as a list of passwords, without altering the image’s appearance.</p>
+<p>This approach makes it easier to bypass security tools and harder for phishing campaigns to be detected.</p>
+<h3 id="project-demo">Project Demo</h3>
+<video src="/_astro/hide_payload_updated.BmolJeq3.mp4" controls frameborder="0" loop muted="true" class="astro-rk4szbjr" data-astro-cid-rk4szbjr>
+Sorry, your browser doesn't support embedded videos.
+</video> 
+<h2 id="support">Support</h2>
+<p>Enjoying my content? Show your support by sharing, liking, or leaving a comment!</p>
+<p>You can also support me on buy me a ko-fi to fuel more awesome content:</p>
+<p><a href="https://ko-fi.com/wafflesexploits"><img src="https://img.shields.io/badge/-Buy%20me%20a%20KOFI-FF5F1D?style=for-the-badge&logo=KO-FI&logoColor=fff" alt="Buy me a KO-FI"/></a></p>
+<h2 id="how-to-hide-a-payload-in-a-image">How to Hide a payload in a Image</h2>
+<p>As mentioned earlier, PNG files use an <strong>IEND chunk</strong> to mark the end of image data. Any bytes appended <em>after</em> this chunk do not affect the image’s integrity or visual appearance, making it a perfect spot to hide payloads.</p>
+<p>A simple way to do this is by using the <code>cat</code> command:</p>
+<div class="code-block-wrapper" data-astro-cid-jgrc2lfe> <pre class="astro-code github-dark astro-jgrc2lfe" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash" data-astro-cid-jgrc2lfe><code><span class="line"><span style="color:#B392F0">cat</span><span style="color:#9ECBFF"> payload.bin</span><span style="color:#F97583"> &gt;&gt;</span><span style="color:#9ECBFF"> image.png</span></span></code></pre> <div class="copy-area" data-astro-cid-jgrc2lfe> <button class="copy-button" title="Copy code" data-astro-cid-jgrc2lfe> <svg class="copy-icon w-6 h-6" data-astro-cid-jgrc2lfe="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"> <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path> </svg> <svg class="success-icon w-6 h-6" data-astro-cid-jgrc2lfe="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"> <polyline points="20 6 9 17 4 12"></polyline> </svg> </button> </div> </div> <script type="module">function r(e){e.classList.toggle("copied"),setTimeout(()=>{e.classList.toggle("copied")},2e3)}function i(e){const t=e.closest(".code-block-wrapper")?.querySelector("pre");if(!t)return;const c=t.querySelector("code")?.innerText||"";navigator.clipboard.writeText(c).then(()=>{r(e)}).catch(n=>{console.error("Failed to copy text: ",n)})}function s(){document.querySelectorAll(".copy-button").forEach(o=>{o instanceof HTMLButtonElement&&o.addEventListener("click",()=>i(o))})}document.addEventListener("DOMContentLoaded",s);</script> 
+<p>This appends the payload’s bytes to the end of the image file. However, I wanted a cross-platform solution using Python, so I wrote a script called <strong><code>payload-embedder.py</code></strong>.</p>
+<p><strong>View the code in GitHub: <a href="https://github.com/WafflesExploits/hide-payload-in-images/blob/main/code/payload-embedder.py">payload-embedder.py</a></strong></p>
+<p>With this script, you can easily embed shellcode into an image file like this:</p>
+<ul>
+<li>
+<!-- If scale exists, then apply the img-class class --><img src="/_astro/15d0136327bf4ca787447ac5d837944d.DIC96ukR_ZWkvw6.png" alt="6cdd406d49bf9692d2e10ee5df85f9b4.png" data-full-src="/_astro/15d0136327bf4ca787447ac5d837944d.DIC96ukR.png" data-astro-cid-qqdm6bys="true" loading="lazy" decoding="async" fetchpriority="auto" width="509" height="99" class="img-class"> 
+</li>
+</ul>
+<p>As expected, the resulting <code>embedded.png</code> looks exactly the same as the original image:</p>
+<ul>
+<li>
+<!-- If scale exists, then apply the img-class class --><img src="/_astro/efd966852f0142e48cecfa0e9e7dd7f6.DvHVnL2i_Z2vBb6F.png" alt="541d2914cb505c67d1b3a60232eb997d.png" data-full-src="/_astro/efd966852f0142e48cecfa0e9e7dd7f6.DvHVnL2i.png" data-astro-cid-qqdm6bys="true" loading="lazy" decoding="async" fetchpriority="auto" width="250" height="112" class="img-class"> 
+</li>
+</ul>
+<p>If you want to use this in practice, you can hide encrypted shellcode in image files and later extract it when needed.</p>
+<p>There are <strong>two methods</strong> to retrieve the payload:</p>
+<ol>
+<li><a href="#fetch-payload-from-disk-via-c">From Disk:</a>
+<ul>
+<li>Store the image file on disk and extract the payload bytes directly from the file.</li>
+</ul>
+</li>
+<li><a href="#store-the-image-file-in-the-resources-section-rsrc-of-a-binary-file">From Resources Section (.rsrc):</a>
+<ul>
+<li>Store the image file in the resources section of a binary file and Extract the payload from there.</li>
+</ul>
+</li>
+</ol>
+<h2 id="fetch-payload-from-disk-via-c">Fetch payload from Disk via C++</h2>
+<p>Once we embed a payload into an image file, the next step is to extract it. The code below, written in <strong>C/C++</strong>, demonstrates how to retrieve the payload bytes from the end of an image file stored on disk.</p>
+<p>This program assumes that you know the size of the original image file. By comparing the size of the modified image file (with the payload) and the original size, we can determine the exact location and size of the payload.</p>
+<p><strong>View the code in GitHub:</strong> <a href="https://github.com/WafflesExploits/hide-payload-in-images/blob/main/code/payload-extractor/payload-extractor-from-file/payload-extractor-from-file.cpp">payload-extractor-from-file.cpp</a></p>
+<p>This code is split into three main parts:</p>
+<ol>
+<li><a href="#constants-in-code"><strong>Constants in Code</strong></a></li>
+<li><a href="#payload-extraction"><strong>Payload Extraction</strong></a></li>
+<li><a href="#executing-the-payload"><strong>Executing the Payload</strong></a></li>
+</ol>
+<h3 id="constants-in-code">Constants in Code</h3>
+<p>Before running the code, there are two constants you need to configure:</p>
+<ol>
+<li><strong>Original File Size</strong> (<code>ORIGINAL_FILE_SIZE</code>):
+<ul>
+<li>You can obtain the original file size from the output of the <strong>Python script</strong> <a href="https://github.com/WafflesExploits/hide-payload-in-images/blob/main/code/payload-embedder.py">payload-embedder.py</a> when embedding the payload into the image file.</li>
+<li>This value represents the size of the image file <em>before</em> the payload was appended.</li>
+</ul>
+</li>
+<li><strong>Target File Path</strong> (<code>TARGET_FILE_PATH</code>):
+<ul>
+<li>This constant specifies the path to the modified image file containing the hidden payload.</li>
+</ul>
+</li>
+</ol>
+<h3 id="payload-extraction">Payload Extraction</h3>
+<p>The extraction process is handled by the <code>extract_payload()</code> function. Here’s how it works step by step:</p>
+<ol>
+<li><strong>Retrieve the File Size:</strong>
+<ul>
+<li>The function calls <code>get_file_size()</code> to obtain the size of the target image file. This helps validate that the payload exists and gives us the total file size.</li>
+</ul>
+</li>
+<li><strong>Calculate the Payload Size:</strong>
+<ul>
+<li>The size of the payload is determined by subtracting the <strong>original file size</strong> from the <strong>modified file size</strong>.</li>
+</ul>
+</li>
+<li><strong>Seek to the Payload Location:</strong>
+<ul>
+<li>Using <code>fseek</code>, the program moves the file pointer to the position where the payload starts, which is right after the original image data.</li>
+</ul>
+</li>
+<li><strong>Read the Payload:</strong>
+<ul>
+<li>The payload bytes are read into a dynamically allocated buffer using <code>fread()</code>. This ensures we have the extracted payload stored in memory for further use.</li>
+</ul>
+</li>
+</ol>
+<h3 id="executing-the-payload">Executing the Payload</h3>
+<p>The execution process is handled by the <code>ExecutePayloadViaCallback()</code> function, which performs the following steps:</p>
+<ol>
+<li><strong>Allocate Executable Memory:</strong>
+<ul>
+<li>The program uses <code>VirtualAlloc</code> to allocate a block of memory that is both readable and executable. This memory is where the payload (shellcode) will be stored.</li>
+</ul>
+</li>
+<li><strong>Copy the Payload:</strong>
+<ul>
+<li>The extracted payload is copied into the allocated memory using <code>memcpy</code>.</li>
+</ul>
+</li>
+<li><strong>Execute the Payload:</strong>
+<ul>
+<li>The <code>SetTimer</code> API is used to execute the payload via a <strong>callback function</strong>. This approach is clean and effective for executing shellcode</li>
+<li>You can view a list of callback functions for payload execution by aahmad097 here:
+<ul>
+<li><a href="https://github.com/aahmad097/AlternativeShellcodeExec">aahmad097/AlternativeShellcodeExec</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Free Allocated Memory:</strong>
+<ul>
+<li>After execution, the memory allocated for the payload is released using <code>VirtualFree</code> to prevent memory leaks.</li>
+</ul>
+</li>
+</ol>
+<h2 id="store-the-image-file-in-the-resources-section-rsrc-of-a-binary-file">Store the Image file in the resources section (.rsrc) of a binary file</h2>
+<p>In this section, I’ll show you how to embed an image file (or any payload) into the <strong>resources section (.rsrc)</strong> of a binary file using Visual Studio. I’ll also explain how to find the image file’s <strong>Resource ID</strong> and <strong>Resource Type</strong>, which are essential for accessing and extracting the payload programmatically later.</p>
+<ol>
+<li><a href="#how-to-store-a-image-file-in-the-rsrc-section">How to store a image file in the .rsrc section.</a></li>
+<li><a href="#finding-the-resource-file-id-and-type">Finding the Resource file ID and Type</a></li>
+</ol>
+<h3 id="how-to-store-a-image-file-in-the-rsrc-section">How to store a image file in the <code>.rsrc</code> section.</h3>
+<p>Follow these steps to embed your image file into the resources section:</p>
+<ol>
+<li>Inside Visual Studio, right-click on <code>&#39;Resource files&#39;</code>.</li>
+<li>Click <code>Add &gt; New &gt; Show all Templates</code> Item.
+<ul>
+<li>
+<!-- If scale exists, then apply the img-class class --><img src="/_astro/83d1a31fc55d49da94c3c51ef1ca5843.BeXQyfrH_ZfI8o6.png" alt="4d2e8fca2ef152ba1cb3d6bcaa3d8393.png" data-full-src="/_astro/83d1a31fc55d49da94c3c51ef1ca5843.BeXQyfrH.png" data-astro-cid-qqdm6bys="true" loading="lazy" decoding="async" fetchpriority="auto" width="294" height="73" class="img-class"> 
+</li>
+</ul>
+</li>
+<li>Go to <code>&#39;Resource&#39;</code>, and select <code>&#39;Resource File .rc&#39;</code>.</li>
+<li>This will generate a new sidebar, the <code>Resource View</code>.</li>
+<li>Right-click on the <code>.rc</code> file (<code>Resource.rc</code> is the default name).</li>
+<li>Select the <code>&#39;Add Resource&#39;</code> option.
+<ul>
+<li>
+<!-- If scale exists, then apply the img-class class --><img src="/_astro/6af25ec10208402390df3d03fe1be930.DNg9CSeW_Z1JWMux.png" alt="42cbe1aaba73ce0b1d64ab8f88738a90.png" data-full-src="/_astro/6af25ec10208402390df3d03fe1be930.DNg9CSeW.png" data-astro-cid-qqdm6bys="true" loading="lazy" decoding="async" fetchpriority="auto" width="189" height="193" class="img-class"> 
+</li>
+</ul>
+</li>
+<li>Click <code>&#39;Import&#39;</code>.</li>
+<li>Select your Embedded Image file:
+<ul>
+<li>
+<!-- If scale exists, then apply the img-class class --><img src="/_astro/d1cc0ea2d5184abf88fee318ce9b1dc9.C9jwx3ED_Z1e85dp.png" alt="11b4ed96bfe4487212a38c0ca7aa0d6c.png" data-full-src="/_astro/d1cc0ea2d5184abf88fee318ce9b1dc9.C9jwx3ED.png" data-astro-cid-qqdm6bys="true" loading="lazy" decoding="async" fetchpriority="auto" width="202" height="151" class="img-class"> 
+</li>
+</ul>
+</li>
+<li>You should see a new file that represents your Image file.
+<ul>
+<li>
+<!-- If scale exists, then apply the img-class class --><img src="/_astro/069f23373f874d48932fa38996f10ff4.Dh3UySo-_Z1eM5e.png" alt="76ad25e3c7177af91036e66e2db5a0e9.png" data-full-src="/_astro/069f23373f874d48932fa38996f10ff4.Dh3UySo-.png" data-astro-cid-qqdm6bys="true" loading="lazy" decoding="async" fetchpriority="auto" width="339" height="138" class="img-class"> 
+</li>
+<li>In this case, <code>IDB_PNG1</code> is the Resource name of my Image file.</li>
+</ul>
+</li>
+</ol>
+<h3 id="finding-the-resource-file-id-and-type">Finding the Resource file ID and Type</h3>
+<p>To access your image file via code, you need to find its Resource ID and Type.</p>
+<p>To access the image file programmatically, you need two key pieces of information:</p>
+<ol>
+<li><a href="#to-find-the-resource-id-you-need-to"><strong>Resource ID</strong></a></li>
+<li><a href="#to-find-the-resource-type-you-need-to"><strong>Resource Type</strong></a></li>
+</ol>
+<h4 id="to-find-the-resource-id-you-need-to">To find the Resource ID you need to:</h4>
+<ol>
+<li>The <strong>Resource ID</strong> is defined as a macro named after your image file’s resource name.</li>
+<li>This macro is located in the <code>resource.h</code> file. Open <code>resource.h</code> to see the Resource ID:
+<ul>
+<li>In my case, the Image file’s Resource name was <code>IDB_PNG1</code>.</li>
+<li>
+<!-- If scale exists, then apply the img-class class --><img src="/_astro/23396645d7314ec3bd8a876f3c355940.BlnrAW-O_ZBsj1V.png" alt="23396645d7314ec3bd8a876f3c355940.png" data-full-src="/_astro/23396645d7314ec3bd8a876f3c355940.BlnrAW-O.png" data-astro-cid-qqdm6bys="true" loading="lazy" decoding="async" fetchpriority="auto" width="569" height="93" class="img-class"> 
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="to-find-the-resource-type-you-need-to">To find the Resource Type you need to:</h4>
+<ol>
+<li>Go to your Project and Open the <code>Solution Explorer</code> window.</li>
+<li>Right-click on <code>Resource.rc</code>, Select <code>Open with...</code> and Select <code>C++ Source Code Editor (with Encoding)</code>.
+<ul>
+<li>
+<!-- If scale exists, then apply the img-class class --><img src="/_astro/8d53195f43b04a78ad7def35e8603e30.COZqpLVU_ZbkK79.png" alt="5afb55350199657bd350f67a2faa62b1.png" data-full-src="/_astro/8d53195f43b04a78ad7def35e8603e30.COZqpLVU.png" data-astro-cid-qqdm6bys="true" loading="lazy" decoding="async" fetchpriority="auto" width="185" height="156" class="img-class"> 
+</li>
+</ul>
+</li>
+<li>With the <code>Resource.rc</code> tab open, Search by your Image file’s Resource name by pressing <code>CTRL+F</code> to open.</li>
+<li>You should see the Image file’s Resource Type after the Resource name, as shown below:
+<ul>
+<li>
+<!-- If scale exists, then apply the img-class class --><img src="/_astro/b25260fc3edf45749f6c0e78c3c0ec62.BmH1MDZc_Z29Vadp.png" alt="a6d111804abd7b098b6a2f424d2b6d90.png" data-full-src="/_astro/b25260fc3edf45749f6c0e78c3c0ec62.BmH1MDZc.png" data-astro-cid-qqdm6bys="true" loading="lazy" decoding="async" fetchpriority="auto" width="512" height="123" class="img-class"> 
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="fetch-payload-from-resources-via-winapi">Fetch Payload from Resources via WinAPI</h2>
+<p>After <a href="#store-the-image-file-in-the-resources-section-rsrc-of-a-binary-file">storing the modified image file (containing the payload) into the <strong>resources section</strong> of a binary file</a>, the next step is to extract and execute it. The code below, written in <strong>C/C++</strong>, demonstrates how to achieve this.</p>
+<p>This code works similarly to the previous example of extracting a payload from a Image file on disk. The key difference lies in the <strong>Payload Extraction</strong>, which retrieves the payload directly from the <strong>resources section</strong> instead of a file.</p>
+<p><strong>View the code in GitHub:</strong> <a href="https://github.com/WafflesExploits/hide-payload-in-images/blob/main/code/payload-extractor/payload-extractor-from-resource/payload-extractor-from-resource.cpp">payload-extractor-from-resource.cpp</a></p>
+<p>This code is split into three main parts:</p>
+<ol>
+<li><a href="#constants-in-code-1"><strong>Constants in Code</strong></a></li>
+<li><a href="#payload-extraction-1"><strong>Payload Extraction</strong></a></li>
+<li><strong>Executing the Payload</strong>
+<ol>
+<li>This part is the same as extracting a payload from an image file on disk. If you want to learn more about it, visit the <a href="#extract-the-payload-from-a-image-file-on-disk-using-cc">Extract the payload from a Image file on disk using C/C++</a> section.</li>
+</ol>
+</li>
+</ol>
+<h3 id="constants-in-code-1">Constants in Code</h3>
+<p>Before running the code, there are three constants that you need to set:</p>
+<ol>
+<li><strong>Original File Size (<code>ORIGINAL_FILE_SIZE</code>)</strong>:
+<ul>
+<li>You can get the original file size from the output of the <strong>Python script</strong> <a href="https://github.com/WafflesExploits/hide-payload-in-images/blob/main/code/payload-embedder.py">payload-embedder.py</a> when you embed the payload into the image file.</li>
+<li>This value represents the exact size of the original image before the payload was appended.</li>
+</ul>
+</li>
+<li><strong>Resource ID (<code>PAYLOAD_RESOURCE_ID</code>)</strong>:
+<ul>
+<li>The Resource ID identifies your embedded image file in the resource section.</li>
+<li>To find this value, refer to the <strong><a href="#finding-the-resource-file-id-and-type">Finding the Resource File ID and Type</a></strong> section.</li>
+</ul>
+</li>
+<li><strong>Resource Type (<code>PAYLOAD_RESOURCE_TYPE</code>)</strong>:
+<ul>
+<li>The Resource Type specifies the type of resource (e.g., <code>PNG</code>).</li>
+<li>This can also be found in the <strong><a href="#finding-the-resource-file-id-and-type">Finding the Resource File ID and Type</a></strong> section.</li>
+</ul>
+</li>
+</ol>
+<h3 id="payload-extraction-1">Payload Extraction</h3>
+<p>The <code>extract_payload_from_resource()</code> function is responsible for retrieving the hidden payload directly from the binary’s resources.</p>
+<p>Here’s how it works step by step:</p>
+<ol>
+<li><strong>Find the Resource:</strong>
+<ul>
+<li>The function uses <code>FindResourceW()</code> to locate the resource by its <strong>ID</strong> (e.g., <code>IDB_PNG1</code>) and <strong>type</strong> (e.g., <code>PNG</code>).</li>
+</ul>
+</li>
+<li><strong>Load and Lock the Resource:</strong>
+<ul>
+<li><code>LoadResource()</code> loads the resource into memory, and <code>LockResource()</code> locks it to ensure safe access to its data.</li>
+</ul>
+</li>
+<li><strong>Calculate the Payload Size:</strong>
+<ul>
+<li>The total resource size is determined using <code>SizeofResource()</code>.</li>
+<li>The payload size is then calculated by subtracting the <strong>original file size</strong> from the total resource size.</li>
+</ul>
+</li>
+<li><strong>Extract the Payload Bytes:</strong>
+<ul>
+<li>Using <code>memcpy</code>, the function extracts the payload bytes starting from the offset where the original file ends.</li>
+</ul>
+</li>
+</ol>
+<h2 id="fetch-payload-from-resources-via-peb">Fetch Payload from Resources via PEB</h2>
+<p>After <a href="#store-the-image-file-in-the-resources-section-rsrc-of-a-binary-file">storing the modified image file (containing the payload) into the <strong>resources section</strong> of a binary file</a>, the next step is to extract and execute it.</p>
+<p>In this section, I’ll show you how to achieve this without relying on WinAPI functions.</p>
+<p>Instead, we’ll manually parse the Process Environment Block (PEB) and PE headers to locate and retrieve the image file and its hidden payload.</p>
+<p>This approach is stealthier and more versatile, as it avoids direct use of WinAPI functions like <code>FindResource</code> and <code>LockResource</code>, making it harder for security tools to detect.</p>
+<p><strong>View the code in GitHub:</strong> <a href="https://github.com/WafflesExploits/hide-payload-in-images/blob/main/code/payload-extractor/payload-extractor-from-rsrc-via-peb/payload-extractor-from-rsrc-via-peb.cpp">payload-extractor-from-resource-via-peb.cpp</a></p>
+<p>This code is split into three main parts:</p>
+<ol>
+<li><a href="#constants-in-code-1"><strong>Constants in Code</strong></a></li>
+<li><a href="#payload-extraction-via-peb-parsing"><strong>Payload Extraction via PEB Parsing</strong></a></li>
+<li><strong>Executing the Payload</strong>
+<ol>
+<li>This part is the same as extracting a payload from an image file on disk. If you want to learn more about it, visit the <a href="#extract-the-payload-from-a-image-file-on-disk-using-cc">Extract the payload from a Image file on disk using C/C++</a> section.</li>
+</ol>
+</li>
+</ol>
+<h3 id="constants-in-code-2">Constants in Code</h3>
+<p>Before running the code, there are three constants that you need to set:</p>
+<ol>
+<li><strong>Original File Size (<code>ORIGINAL_FILE_SIZE</code>)</strong>:
+<ul>
+<li>You can get the original file size from the output of the <strong>Python script</strong> <a href="https://github.com/WafflesExploits/hide-payload-in-images/blob/main/code/payload-embedder.py">payload-embedder.py</a> when you embed the payload into the image file.</li>
+<li>This value represents the exact size of the original image before the payload was appended.</li>
+</ul>
+</li>
+<li><strong>Resource ID (<code>PAYLOAD_RESOURCE_ID</code>)</strong>:
+<ul>
+<li>The Resource ID identifies your embedded image file in the resource section.</li>
+<li>To find this value, refer to the <strong><a href="#finding-the-resource-file-id-and-type">Finding the Resource File ID and Type</a></strong> section.</li>
+</ul>
+</li>
+<li><strong>Resource Type (<code>PAYLOAD_RESOURCE_TYPE</code>)</strong>:
+<ul>
+<li>The Resource Type specifies the type of resource (e.g., <code>PNG</code>).</li>
+<li>This can also be found in the <strong><a href="#finding-the-resource-file-id-and-type">Finding the Resource File ID and Type</a></strong> section.</li>
+</ul>
+</li>
+</ol>
+<h3 id="payload-extraction-via-peb-parsing">Payload Extraction via PEB Parsing</h3>
+<p>The <code>extract_payload_from_resource_via_peb()</code> function is responsible for retrieving the hidden payload directly from the binary’s resources without using WinAPI functions. Here’s how it works step by step:</p>
+<ol>
+<li><strong>Retrieves the Module Handle:</strong>
+<ul>
+<li>The function uses <a href="#hgetcurrentmodulehandle">hGetCurrentModuleHandle()</a> to get the handle of the current module by accessing the Process Environment Block (PEB) directly.</li>
+<li>This avoids using <code>GetModuleHandle</code> or similar WinAPI calls.</li>
+</ul>
+</li>
+<li><strong>Fetches Resource Data:</strong>
+<ul>
+<li>It calls <a href="#getresourcedata">GetResourceData()</a> to manually parse the PE headers, locate the resource directory, and extract the raw resource data and its size.</li>
+<li>This function avoids using WinAPI functions like <code>FindResource</code> and <code>LockResource</code>.</li>
+</ul>
+</li>
+<li><strong>Calculates Payload Size:</strong>
+<ul>
+<li>The total resource size is determined, and the payload size is calculated by subtracting the <strong>original file size</strong> from the total resource size.</li>
+</ul>
+</li>
+<li><strong>Extracts the Payload Bytes:</strong>
+<ul>
+<li>Using <code>memcpy</code>, the function extracts the payload bytes starting from the offset where the original file ends.</li>
+</ul>
+</li>
+<li><strong>Stores the Payload:</strong>
+<ul>
+<li>The extracted payload and its size are stored in the provided pointers for further use.</li>
+</ul>
+</li>
+</ol>
+<h3 id="hgetcurrentmodulehandle">hGetCurrentModuleHandle</h3>
+<div class="code-block-wrapper" data-astro-cid-jgrc2lfe> <pre class="astro-code github-dark astro-jgrc2lfe" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="cpp" data-astro-cid-jgrc2lfe><code><span class="line"><span style="color:#6A737D">/**</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#F97583">@brief</span><span style="color:#6A737D"> Retrieves the handle of the current module via PEB using architecture-appropriate instructions (x86/x64), avoiding memory walking for reliability.</span></span>
+<span class="line"><span style="color:#6A737D"> * </span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#F97583">@return</span><span style="color:#6A737D"> HMODULE Always returns the base address of the current module via the PEB&#39;s ImageBaseAddress field.</span></span>
+<span class="line"><span style="color:#6A737D"> */</span></span>
+<span class="line"><span style="color:#B392F0">HMODULE</span><span style="color:#B392F0"> hGetCurrentModuleHandle</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#6A737D">    // Retrieve the PEB pointer using the appropriate method for x86/x64</span></span>
+<span class="line"><span style="color:#F97583">#ifdef</span><span style="color:#B392F0"> _WIN64</span></span>
+<span class="line"><span style="color:#E1E4E8">    PPEB pPeb </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (PPEB)</span><span style="color:#B392F0">__readgsqword</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">0x</span><span style="color:#79B8FF">60</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">#else</span></span>
+<span class="line"><span style="color:#E1E4E8">    PPEB pPeb </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (PPEB)</span><span style="color:#B392F0">__readfsdword</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">0x</span><span style="color:#79B8FF">30</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">#endif</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Return the image base address stored in the PEB</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> (HMODULE)pPeb-&gt;ImageBaseAddress;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre> <div class="copy-area" data-astro-cid-jgrc2lfe> <button class="copy-button" title="Copy code" data-astro-cid-jgrc2lfe> <svg class="copy-icon w-6 h-6" data-astro-cid-jgrc2lfe="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"> <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path> </svg> <svg class="success-icon w-6 h-6" data-astro-cid-jgrc2lfe="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"> <polyline points="20 6 9 17 4 12"></polyline> </svg> </button> </div> </div>  
+<p><strong>Here’s how it works:</strong></p>
+<ol>
+<li><strong>Retrieves the PEB Pointer</strong>:
+<ul>
+<li>The function uses architecture-specific instructions to access the Process Environment Block (PEB):
+<ul>
+<li>On x64 systems, it uses __readgsqword to access the PEB from the GS segment.</li>
+<li>On x86 systems, it uses __readfsdword to access the PEB from the FS segment.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Accesses the ImageBaseAddress Field</strong>:
+<ul>
+<li>The PEB contains the ImageBaseAddress field, which stores the base address of the current module.</li>
+</ul>
+</li>
+<li><strong>Returns the Module Handle</strong>:
+<ul>
+<li>The function returns the ImageBaseAddress as the module handle, ensuring correct retrieval regardless of compiler optimizations.</li>
+</ul>
+</li>
+</ol>
+<p><strong>Note:</strong> This is an updated version of the function.</p>
+<p>The original implementation of hGetCurrentModuleHandle walked backward through memory to locate the DOS and PE headers.
+While this method worked in some cases, it was unreliable and prone to crashes due to invalid memory access, especially in unoptimized builds or when encountering unexpected memory layouts.
+The updated version directly accesses the PEB, which is a safer and more reliable approach, as the PEB always contains the correct module base address.</p>
+<h3 id="getresourcedata">GetResourceData</h3>
+<div class="code-block-wrapper" data-astro-cid-jgrc2lfe> <pre class="astro-code github-dark astro-jgrc2lfe" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="cpp" data-astro-cid-jgrc2lfe><code><span class="line"><span style="color:#6A737D">/**</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#F97583">@brief</span><span style="color:#6A737D"> Fetches raw data and size for a specified resource from the current module.</span></span>
+<span class="line"><span style="color:#6A737D"> *</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#F97583">@param</span><span style="color:#FFAB70"> hModule</span><span style="color:#6A737D"> Handle to the module containing the resource.</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#F97583">@param</span><span style="color:#FFAB70"> ResourceId</span><span style="color:#6A737D"> ID of the resource to fetch.</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#F97583">@param</span><span style="color:#FFAB70"> ppResourceRawData</span><span style="color:#6A737D"> Pointer to a pointer where the raw resource data will be stored.</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#F97583">@param</span><span style="color:#FFAB70"> psResourceDataSize</span><span style="color:#6A737D"> Pointer to a DWORD where the resource data size will be stored.</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#F97583">@return</span><span style="color:#6A737D"> BOOL TRUE if the resource data is successfully fetched, FALSE otherwise.</span></span>
+<span class="line"><span style="color:#6A737D"> */</span></span>
+<span class="line"><span style="color:#B392F0">BOOL</span><span style="color:#B392F0"> GetResourceData</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">HMODULE</span><span style="color:#FFAB70"> hModule</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">WORD</span><span style="color:#FFAB70"> ResourceId</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">PVOID</span><span style="color:#F97583">*</span><span style="color:#FFAB70"> ppResourceRawData</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">PDWORD</span><span style="color:#FFAB70"> psResourceDataSize</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    CHAR</span><span style="color:#F97583">*</span><span style="color:#E1E4E8"> pBaseAddr </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (CHAR</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">)hModule;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Parse the DOS header to locate the PE headers</span></span>
+<span class="line"><span style="color:#E1E4E8">    PIMAGE_DOS_HEADER pImgDosHdr </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (PIMAGE_DOS_HEADER)pBaseAddr;</span></span>
+<span class="line"><span style="color:#E1E4E8">    PIMAGE_NT_HEADERS pImgNTHdr </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (PIMAGE_NT_HEADERS)(pBaseAddr </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> pImgDosHdr-&gt;e_lfanew);</span></span>
+<span class="line"><span style="color:#E1E4E8">    PIMAGE_OPTIONAL_HEADER pImgOptionalHdr </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (PIMAGE_OPTIONAL_HEADER)</span><span style="color:#F97583">&amp;</span><span style="color:#E1E4E8">pImgNTHdr-&gt;OptionalHeader;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Locate the resource directory from the PE optional header</span></span>
+<span class="line"><span style="color:#E1E4E8">    PIMAGE_DATA_DIRECTORY pDataDir </span><span style="color:#F97583">=</span><span style="color:#F97583"> &amp;</span><span style="color:#E1E4E8">pImgOptionalHdr-&gt;DataDirectory[IMAGE_DIRECTORY_ENTRY_RESOURCE];</span></span>
+<span class="line"><span style="color:#E1E4E8">    PIMAGE_RESOURCE_DIRECTORY pResourceDir </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (PIMAGE_RESOURCE_DIRECTORY)(pBaseAddr </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> pDataDir-&gt;VirtualAddress);</span></span>
+<span class="line"><span style="color:#E1E4E8">    PIMAGE_RESOURCE_DIRECTORY_ENTRY pResourceEntry </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (PIMAGE_RESOURCE_DIRECTORY_ENTRY)(pResourceDir </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Iterate through the resource directory entries</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">size_t</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">; i </span><span style="color:#F97583">&lt;</span><span style="color:#E1E4E8"> (pResourceDir-&gt;NumberOfNamedEntries </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> pResourceDir-&gt;NumberOfIdEntries); i</span><span style="color:#F97583">++</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (pResourceEntry[i].DataIsDirectory </span><span style="color:#F97583">==</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">            break</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // Locate the second-level resource directory</span></span>
+<span class="line"><span style="color:#E1E4E8">        PIMAGE_RESOURCE_DIRECTORY pResourceDir2 </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (PIMAGE_RESOURCE_DIRECTORY)(pBaseAddr </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> pDataDir-&gt;VirtualAddress </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> (pResourceEntry[i].OffsetToDirectory </span><span style="color:#F97583">&amp;</span><span style="color:#F97583"> 0x</span><span style="color:#79B8FF">7FFFFFFF</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"><span style="color:#E1E4E8">        PIMAGE_RESOURCE_DIRECTORY_ENTRY pResourceEntry2 </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (PIMAGE_RESOURCE_DIRECTORY_ENTRY)(pResourceDir2 </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // Check if the second-level entry matches the requested resource ID</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (pResourceEntry2-&gt;DataIsDirectory </span><span style="color:#F97583">==</span><span style="color:#79B8FF"> 1</span><span style="color:#F97583"> &amp;&amp;</span><span style="color:#E1E4E8"> pResourceEntry2-&gt;Id </span><span style="color:#F97583">==</span><span style="color:#E1E4E8"> ResourceId) {</span></span>
+<span class="line"><span style="color:#6A737D">            // Locate the third-level resource directory</span></span>
+<span class="line"><span style="color:#E1E4E8">            PIMAGE_RESOURCE_DIRECTORY pResourceDir3 </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (PIMAGE_RESOURCE_DIRECTORY)(pBaseAddr </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> pDataDir-&gt;VirtualAddress </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> (pResourceEntry2-&gt;OffsetToDirectory </span><span style="color:#F97583">&amp;</span><span style="color:#F97583"> 0x</span><span style="color:#79B8FF">7FFFFFFF</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"><span style="color:#E1E4E8">            PIMAGE_RESOURCE_DIRECTORY_ENTRY pResourceEntry3 </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (PIMAGE_RESOURCE_DIRECTORY_ENTRY)(pResourceDir3 </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            // Retrieve the resource data entry</span></span>
+<span class="line"><span style="color:#E1E4E8">            PIMAGE_RESOURCE_DATA_ENTRY pResource </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (PIMAGE_RESOURCE_DATA_ENTRY)(pBaseAddr </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> pDataDir-&gt;VirtualAddress </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> (pResourceEntry3-&gt;OffsetToData </span><span style="color:#F97583">&amp;</span><span style="color:#F97583"> 0x</span><span style="color:#79B8FF">7FFFFFFF</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            // Store the raw resource data and its size</span></span>
+<span class="line"><span style="color:#F97583">            *</span><span style="color:#E1E4E8">ppResourceRawData </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (PVOID)(pBaseAddr </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> pResource-&gt;OffsetToData);</span></span>
+<span class="line"><span style="color:#F97583">            *</span><span style="color:#E1E4E8">psResourceDataSize </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> pResource-&gt;Size;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#E1E4E8"> TRUE;</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> FALSE;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre> <div class="copy-area" data-astro-cid-jgrc2lfe> <button class="copy-button" title="Copy code" data-astro-cid-jgrc2lfe> <svg class="copy-icon w-6 h-6" data-astro-cid-jgrc2lfe="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"> <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path> </svg> <svg class="success-icon w-6 h-6" data-astro-cid-jgrc2lfe="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"> <polyline points="20 6 9 17 4 12"></polyline> </svg> </button> </div> </div>  
+<p><strong>Here’s how it works:</strong></p>
+<ol>
+<li><strong>Parses the PE Headers</strong>:
+<ul>
+<li>The function starts by parsing the DOS header to locate the PE headers.</li>
+</ul>
+</li>
+<li><strong>Locates the Resource Directory</strong>:
+<ul>
+<li>It uses the <code>DataDirectory</code> array in the optional header to find the resource section’s virtual address.</li>
+</ul>
+</li>
+<li><strong>Iterates Through Resource Entries</strong>:
+<ul>
+<li>It iterates through the resource directory entries, comparing the <code>ResourceId</code> to find the matching resource.</li>
+</ul>
+</li>
+<li><strong>Extracts Resource Data</strong>:
+<ul>
+<li>Once the resource is found, it retrieves the raw data and size from the resource data entry.</li>
+</ul>
+</li>
+<li><strong>Stores the Result</strong>:
+<ul>
+<li>The raw resource data and size are stored in the provided pointers for further use.</li>
+</ul>
+</li>
+</ol>  </div> </article>  <aside class="hidden lg:block lg:col-span-4" data-astro-cid-scuu7fyy> <div class="sticky top-18 flex flex-col max-w-[36ch] h-[calc(95vh-4.5rem)]" data-astro-cid-scuu7fyy> <div class="border-l-1 border-slate-600 pl-3 toc-content-area" data-astro-cid-scuu7fyy> <h2 class="font-semibold text-lg text-gray-200 mb-1" data-astro-cid-scuu7fyy>Table of Contents</h2>
+            <div class="max-h-[70vh] overflow-y-auto scroll-fade-container" data-astro-cid-scuu7fyy> <ul class="pl-3 pr-2 " data-astro-cid-xvrfupwn> <li class="toc-h2-item" data-astro-cid-xvrfupwn>  <div class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#introduction" class="toc-link" data-astro-cid-xvrfupwn> Introduction </a> </div> <div class="h3-list-wrapper" data-astro-cid-xvrfupwn> <ul class="toc-h3-list pl-6 pr-2" data-astro-cid-xvrfupwn>  <li class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#project-demo" class="toc-link" data-astro-cid-xvrfupwn> Project Demo </a> </li> </ul> </div> </li><li class="toc-h2-item" data-astro-cid-xvrfupwn>  <div class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#support" class="toc-link" data-astro-cid-xvrfupwn> Support </a> </div>  </li><li class="toc-h2-item" data-astro-cid-xvrfupwn>  <div class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#how-to-hide-a-payload-in-a-image" class="toc-link" data-astro-cid-xvrfupwn> How to Hide a payload in a Image </a> </div>  </li><li class="toc-h2-item" data-astro-cid-xvrfupwn>  <div class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#fetch-payload-from-disk-via-c" class="toc-link" data-astro-cid-xvrfupwn> Fetch payload from Disk via C++ </a> </div> <div class="h3-list-wrapper" data-astro-cid-xvrfupwn> <ul class="toc-h3-list pl-6 pr-2" data-astro-cid-xvrfupwn>  <li class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#constants-in-code" class="toc-link" data-astro-cid-xvrfupwn> Constants in Code </a> </li><li class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#payload-extraction" class="toc-link" data-astro-cid-xvrfupwn> Payload Extraction </a> </li><li class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#executing-the-payload" class="toc-link" data-astro-cid-xvrfupwn> Executing the Payload </a> </li> </ul> </div> </li><li class="toc-h2-item" data-astro-cid-xvrfupwn>  <div class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#store-the-image-file-in-the-resources-section-rsrc-of-a-binary-file" class="toc-link" data-astro-cid-xvrfupwn> Store the Image file in the resources section (.rsrc) of a binary file </a> </div> <div class="h3-list-wrapper" data-astro-cid-xvrfupwn> <ul class="toc-h3-list pl-6 pr-2" data-astro-cid-xvrfupwn>  <li class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#how-to-store-a-image-file-in-the-rsrc-section" class="toc-link" data-astro-cid-xvrfupwn> How to store a image file in the .rsrc section. </a> </li><li class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#finding-the-resource-file-id-and-type" class="toc-link" data-astro-cid-xvrfupwn> Finding the Resource file ID and Type </a> </li> </ul> </div> </li><li class="toc-h2-item" data-astro-cid-xvrfupwn>  <div class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#fetch-payload-from-resources-via-winapi" class="toc-link" data-astro-cid-xvrfupwn> Fetch Payload from Resources via WinAPI </a> </div> <div class="h3-list-wrapper" data-astro-cid-xvrfupwn> <ul class="toc-h3-list pl-6 pr-2" data-astro-cid-xvrfupwn>  <li class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#constants-in-code-1" class="toc-link" data-astro-cid-xvrfupwn> Constants in Code </a> </li><li class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#payload-extraction-1" class="toc-link" data-astro-cid-xvrfupwn> Payload Extraction </a> </li> </ul> </div> </li><li class="toc-h2-item" data-astro-cid-xvrfupwn>  <div class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#fetch-payload-from-resources-via-peb" class="toc-link" data-astro-cid-xvrfupwn> Fetch Payload from Resources via PEB </a> </div> <div class="h3-list-wrapper" data-astro-cid-xvrfupwn> <ul class="toc-h3-list pl-6 pr-2" data-astro-cid-xvrfupwn>  <li class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#constants-in-code-2" class="toc-link" data-astro-cid-xvrfupwn> Constants in Code </a> </li><li class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#payload-extraction-via-peb-parsing" class="toc-link" data-astro-cid-xvrfupwn> Payload Extraction via PEB Parsing </a> </li><li class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#hgetcurrentmodulehandle" class="toc-link" data-astro-cid-xvrfupwn> hGetCurrentModuleHandle </a> </li><li class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#getresourcedata" class="toc-link" data-astro-cid-xvrfupwn> GetResourceData </a> </li> </ul> </div> </li> </ul> <script type="module">const n=new Map;let o=!1;function a(){document.querySelectorAll("a.toc-link").forEach(i=>i.setAttribute("data-active","false")),document.querySelectorAll("h2[data-active], h3[data-active]").forEach(i=>i.removeAttribute("data-active"))}function d(){const t=document.querySelector("a.toc-link"),e=document.querySelector(".content-style h2, .content-style h3");!t||!e||(t.setAttribute("data-active","true"),t.scrollIntoView({behavior:"smooth",block:"nearest"}),e.setAttribute("data-active","true"))}function u(){let t=!1;const e=()=>{window.scrollY<200&&!t?(a(),d(),t=!0):window.scrollY>=200&&(t=!1)};window.addEventListener("scroll",e)}function s(){const t=document.querySelector('h2[data-active="true"], h3[data-active="true"]');if(t){const e=t.id;document.querySelector(`a.toc-link[href="#${e}"]`)?.setAttribute("data-active","true")}}function h(t){for(const i of t){if(!i.isIntersecting){n.delete(i.target);continue}n.set(i.target,i)}if(n.size===0)return;let e=null;for(const i of Array.from(n.values()))e||(e=i),i.boundingClientRect.top<e.boundingClientRect.top&&(e=i);e?.target.getAttribute("data-active")!=="true"&&(a(),e&&e.target.setAttribute("data-active","true"),o&&s())}function c(t){o=t.matches,o&&s()}function f(){const t=window.matchMedia("(min-width: 1024px)");t.addEventListener("change",c),c(t);const e=document.querySelectorAll(".content-style h2, .content-style h3");if(e.length===0)return;const i={root:null,rootMargin:"0px 0px -60% 0px",threshold:0},r=new IntersectionObserver(h,i);e.forEach(l=>r.observe(l)),u()}document.addEventListener("DOMContentLoaded",()=>{f()});</script>  </div> </div> </div> </aside> <!-- Post-article sections --> <div id="post-article-div" class="lg:col-span-7" data-astro-cid-scuu7fyy> <hr class="mt-10 border-gray-700" data-astro-cid-scuu7fyy> <div id="post-content-section" class="mt-4 mb-5 lg:flex lg:justify-between lg:items-start lg:gap-x-8 lg:gap-y-4" data-astro-cid-scuu7fyy> <!-- Tags Section --> <div id="tag-section" class="mb-4 lg:mb-0" data-astro-cid-scuu7fyy> <div class="text-left mb-2 lg:mb-4 flex items-center gap-1" data-astro-cid-scuu7fyy> <svg class="w-6 h-auto" data-astro-cid-scuu7fyy="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <defs> <mask id="tagMask1"> <rect width="24" height="24" fill="white"></rect> <circle cx="7" cy="7" r="1.5" fill="black"></circle> </mask> <mask id="tagMask2"> <rect width="24" height="24" fill="white"></rect> <circle cx="5" cy="9" r="1.5" fill="black"></circle> </mask> </defs> <!-- Back tag --> <g transform="translate(2, -2)" opacity="0.6"> <path d="M22.09 15.91L14.92 23.08C14.55 23.45 14.05 23.66 13.52 23.66C12.99 23.66 12.49 23.45 12.12 23.08L3.89 14.85C3.52 14.48 3.31 13.98 3.31 13.45V6.68C3.31 5.62 4.16 4.77 5.22 4.77H11.99C12.52 4.77 13.02 4.98 13.39 5.35L21.62 13.58C21.99 13.95 22.2 14.45 22.2 14.98C22.2 15.51 21.99 16.01 21.62 16.38L22.09 15.91Z" fill="currentColor" opacity="0.6" mask="url(#tagMask2)"></path> </g> <!-- Front tag --> <path d="M20.59 13.41L13.42 20.58C13.05 20.95 12.55 21.16 12.02 21.16C11.49 21.16 10.99 20.95 10.62 20.58L2.39 12.35C2.02 11.98 1.81 11.48 1.81 10.95V4.18C1.81 3.12 2.66 2.27 3.72 2.27H10.49C11.02 2.27 11.52 2.48 11.89 2.85L20.12 11.08C20.49 11.45 20.7 11.95 20.7 12.48C20.7 13.01 20.49 13.51 20.12 13.88L20.59 13.41Z" fill="currentColor" mask="url(#tagMask1)"></path> </svg> <h2 class="text-2xl font-semibold text-white" data-astro-cid-scuu7fyy>Tags</h2> </div> <div id="tags-wrapper" class="flex flex-wrap items-center gap-1" aria-expanded="false" data-astro-cid-scuu7fyy> <!-- Always visible tags (first 7) --> <a href="/work?tags=Python" class="text-xs px-1.7 py-1 rounded-md
+bg-secondary-accent hover:bg-gray-600 transition-colors" data-astro-cid-scuu7fyy> Python </a><a href="/work?tags=C%2B%2B" class="text-xs px-1.7 py-1 rounded-md
+bg-secondary-accent hover:bg-gray-600 transition-colors" data-astro-cid-scuu7fyy> C++ </a><a href="/work?tags=Malware" class="text-xs px-1.7 py-1 rounded-md
+bg-secondary-accent hover:bg-gray-600 transition-colors" data-astro-cid-scuu7fyy> Malware </a><a href="/work?tags=Red%20Team" class="text-xs px-1.7 py-1 rounded-md
+bg-secondary-accent hover:bg-gray-600 transition-colors" data-astro-cid-scuu7fyy> Red Team </a><a href="/work?tags=EDR%20Evasion" class="text-xs px-1.7 py-1 rounded-md
+bg-secondary-accent hover:bg-gray-600 transition-colors" data-astro-cid-scuu7fyy> EDR Evasion </a> <!-- Conditionally rendered "Show More" button --> <div id="more-tags" class="hidden flex-wrap items-center gap-1" data-astro-cid-scuu7fyy> <a href="/work?tags=Cybersecurity" class="text-xs px-1.7 py-1 rounded-md
+bg-secondary-accent hover:bg-gray-600 transition-colors" data-astro-cid-scuu7fyy> Cybersecurity </a><a href="/work?tags=Hacking" class="text-xs px-1.7 py-1 rounded-md
+bg-secondary-accent hover:bg-gray-600 transition-colors" data-astro-cid-scuu7fyy> Hacking </a><a href="/work?tags=Steganography" class="text-xs px-1.7 py-1 rounded-md
+bg-secondary-accent hover:bg-gray-600 transition-colors" data-astro-cid-scuu7fyy> Steganography </a><a href="/work?tags=Payload%20Hiding" class="text-xs px-1.7 py-1 rounded-md
+bg-secondary-accent hover:bg-gray-600 transition-colors" data-astro-cid-scuu7fyy> Payload Hiding </a><a href="/work?tags=Programming" class="text-xs px-1.7 py-1 rounded-md
+bg-secondary-accent hover:bg-gray-600 transition-colors" data-astro-cid-scuu7fyy> Programming </a> </div> <button id="show-all-btn" class="text-sm font-semibold hover:text-sky-400 transition-colors rounded cursor-pointer" data-astro-cid-scuu7fyy>
+Show All
+</button> <button id="show-less-btn" class="text-sm font-semibold hover:text-sky-400 transition-colors rounded cursor-pointer" data-astro-cid-scuu7fyy>
+Show Less
+</button>  </div> </div> <!-- Share Section --> <div id="share-section" data-astro-cid-scuu7fyy> <div class="text-left mb-2 flex items-center gap-1" data-astro-cid-scuu7fyy> <svg class="w-7 h-auto" data-astro-cid-scuu7fyy="true" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g fill="currentColor"> <path d="M6.746704,4 L10.2109085,4 C10.625122,4 10.9609085,4.33578644 10.9609085,4.75 C10.9609085,5.12969577 10.6787546,5.44349096 10.312679,5.49315338 L10.2109085,5.5 L6.746704,5.5 C5.55584001,5.5 4.58105908,6.42516159 4.50189481,7.59595119 L4.496704,7.75 L4.496704,17.25 C4.496704,18.440864 5.42186559,19.4156449 6.59265519,19.4948092 L6.746704,19.5 L16.247437,19.5 C17.438301,19.5 18.4130819,18.5748384 18.4922462,17.4040488 L18.497437,17.25 L18.497437,16.752219 C18.497437,16.3380054 18.8332234,16.002219 19.247437,16.002219 C19.6271328,16.002219 19.940928,16.2843728 19.9905904,16.6504484 L19.997437,16.752219 L19.997437,17.25 C19.997437,19.2542592 18.4250759,20.8912737 16.4465956,20.994802 L16.247437,21 L6.746704,21 C4.74244483,21 3.10543026,19.4276389 3.00190201,17.4491586 L2.996704,17.25 L2.996704,7.75 C2.996704,5.74574083 4.56906505,4.10872626 6.54754543,4.00519801 L6.746704,4 L10.2109085,4 L6.746704,4 Z M14.5006976,6.51985416 L14.5006976,3.75 C14.5006976,3.12602964 15.20748,2.7899466 15.6876724,3.13980165 L15.7698701,3.20874226 L21.7644714,8.95874226 C22.0442311,9.22708681 22.0696965,9.65811353 21.8408438,9.95607385 L21.7645584,10.0411742 L15.7699571,15.7930263 C15.3196822,16.2250675 14.5877784,15.9476738 14.5078455,15.3589039 L14.5006976,15.2518521 L14.5006976,12.5265324 L14.1572053,12.5566444 C11.7575155,12.8069657 9.45747516,13.8878535 7.24265269,15.8173548 C6.72354372,16.2695904 5.9204142,15.8420034 6.00578894,15.1588473 C6.67057872,9.83929778 9.45245108,6.90729635 14.2013326,6.53950096 L14.5006976,6.51985416 L14.5006976,3.75 L14.5006976,6.51985416 Z M16.0006976,5.50864341 L16.0006976,7.25 C16.0006976,7.66421356 15.6649111,8 15.2506976,8 C11.3772927,8 8.97667396,9.67612932 7.93942891,13.1571821 L7.86037164,13.4357543 L8.21256044,13.1989337 C10.4490427,11.7371925 12.7984587,11 15.2506976,11 C15.6303934,11 15.9441885,11.2821539 15.993851,11.6482294 L16.0006976,11.75 L16.0006976,13.4928166 L20.1619348,9.50008715 L16.0006976,5.50864341 Z" id="🎨-Color"></path> </g> </g> </svg> <h2 class="text-2xl font-semibold text-white" data-astro-cid-scuu7fyy>Share</h2> </div> <div class="flex items-center gap-2"> <!-- Twitter --> <div class="group relative inline-flex" data-astro-cid-lejbfuzf> <!-- Whatever you put inside the TooltipWrapper tags goes here -->  <a href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fandrecrafts.com%2Fposts%2Fhide-shellcode-in-images%2F&text=Hiding%20Shellcode%20in%20Images%20with%20Python%20and%20C%2FC%2B%2B" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-secondary-accent hover:bg-sky-600 text-subtle-gray hover:text-white transition-all duration-200"> <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"> <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.25 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path> </svg> </a>  <div role="tooltip" class="tooltip
+  absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1.5 
+  text-sm font-medium bg-secondary-accent
+  rounded-md shadow-lg w-max max-w-xs
+  opacity-0 [@media_(hover:hover)]:group-hover:opacity-100
+  transition-opacity duration-300 pointer-events-none
+" data-astro-cid-lejbfuzf> <span class="tooltip-text" data-astro-cid-lejbfuzf>Twitter</span> <div class="tooltip-arrow absolute left-1/2 -translate-x-1/2
+  top-full w-4 h-2
+  bg-secondary-accent
+" data-astro-cid-lejbfuzf></div> </div> </div> <!-- LinkedIn --> <div class="group relative inline-flex" data-astro-cid-lejbfuzf> <!-- Whatever you put inside the TooltipWrapper tags goes here -->  <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fandrecrafts.com%2Fposts%2Fhide-shellcode-in-images%2F" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-secondary-accent hover:bg-sky-600 text-subtle-gray hover:text-white transition-all duration-200"> <svg class="w-5 h-5<" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"> <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path> </svg> </a>  <div role="tooltip" class="tooltip
+  absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1.5 
+  text-sm font-medium bg-secondary-accent
+  rounded-md shadow-lg w-max max-w-xs
+  opacity-0 [@media_(hover:hover)]:group-hover:opacity-100
+  transition-opacity duration-300 pointer-events-none
+" data-astro-cid-lejbfuzf> <span class="tooltip-text" data-astro-cid-lejbfuzf>LinkedIn</span> <div class="tooltip-arrow absolute left-1/2 -translate-x-1/2
+  top-full w-4 h-2
+  bg-secondary-accent
+" data-astro-cid-lejbfuzf></div> </div> </div> <div class="group relative inline-flex" data-astro-cid-lejbfuzf> <!-- Whatever you put inside the TooltipWrapper tags goes here -->  <a href="https://www.reddit.com/submit?url=https%3A%2F%2Fandrecrafts.com%2Fposts%2Fhide-shellcode-in-images%2F&title=Hiding%20Shellcode%20in%20Images%20with%20Python%20and%20C%2FC%2B%2B" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-secondary-accent hover:bg-sky-600 text-subtle-gray hover:text-white transition-all duration-200"> <svg class="w-5 h-5<" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-reddit" viewBox="0 0 16 16"> <path d="M6.167 8a.83.83 0 0 0-.83.83c0 .459.372.84.83.831a.831.831 0 0 0 0-1.661m1.843 3.647c.315 0 1.403-.038 1.976-.611a.23.23 0 0 0 0-.306.213.213 0 0 0-.306 0c-.353.363-1.126.487-1.67.487-.545 0-1.308-.124-1.671-.487a.213.213 0 0 0-.306 0 .213.213 0 0 0 0 .306c.564.563 1.652.61 1.977.61zm.992-2.807c0 .458.373.83.831.83s.83-.381.83-.83a.831.831 0 0 0-1.66 0z"></path> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.828-1.165c-.315 0-.602.124-.812.325-.801-.573-1.9-.945-3.121-.993l.534-2.501 1.738.372a.83.83 0 1 0 .83-.869.83.83 0 0 0-.744.468l-1.938-.41a.2.2 0 0 0-.153.028.2.2 0 0 0-.086.134l-.592 2.788c-1.24.038-2.358.41-3.17.992-.21-.2-.496-.324-.81-.324a1.163 1.163 0 0 0-.478 2.224q-.03.17-.029.353c0 1.795 2.091 3.256 4.669 3.256s4.668-1.451 4.668-3.256c0-.114-.01-.238-.029-.353.401-.181.688-.592.688-1.069 0-.65-.525-1.165-1.165-1.165"></path> </svg> </a>  <div role="tooltip" class="tooltip
+  absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1.5 
+  text-sm font-medium bg-secondary-accent
+  rounded-md shadow-lg w-max max-w-xs
+  opacity-0 [@media_(hover:hover)]:group-hover:opacity-100
+  transition-opacity duration-300 pointer-events-none
+" data-astro-cid-lejbfuzf> <span class="tooltip-text" data-astro-cid-lejbfuzf>Reddit</span> <div class="tooltip-arrow absolute left-1/2 -translate-x-1/2
+  top-full w-4 h-2
+  bg-secondary-accent
+" data-astro-cid-lejbfuzf></div> </div> </div> <!-- Copy Link Button --> <div class="group relative inline-flex copy-button-container" data-astro-cid-lejbfuzf> <!-- Whatever you put inside the TooltipWrapper tags goes here -->  <button class="cursor-pointer p-2 rounded-lg bg-secondary-accent hover:bg-sky-600 text-subtle-gray hover:text-white transition-all duration-200 copy-button" data-text="Copy Link" data-copy-value="https%3A%2F%2Fandrecrafts.com%2Fposts%2Fhide-shellcode-in-images%2F" aria-label="Copy Link" data-astro-cid-74lkg7sv> <!-- Button Content Slot -->  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"></path> </svg>  </button>  <div role="tooltip" class="tooltip
+  absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1.5 
+  text-sm font-medium bg-secondary-accent
+  rounded-md shadow-lg w-max max-w-xs
+  opacity-0 [@media_(hover:hover)]:group-hover:opacity-100
+  transition-opacity duration-300 pointer-events-none
+" data-astro-cid-lejbfuzf> <span class="tooltip-text" data-astro-cid-lejbfuzf>Copy Link</span> <div class="tooltip-arrow absolute left-1/2 -translate-x-1/2
+  top-full w-4 h-2
+  bg-secondary-accent
+" data-astro-cid-lejbfuzf></div> </div> </div> <script type="module">function c(){const r=document.querySelectorAll(".copy-button-container");for(const n of r){const t=n.querySelector(".copy-button");if(!t||t.dataset.initialized)continue;t.dataset.initialized="true";const e=n.querySelector(".tooltip"),o=n.querySelector(".tooltip-text"),a=t.dataset.copyValue,i=t.dataset.text;!e||!o||!a||!i||(t.addEventListener("click",async()=>{try{await navigator.clipboard.writeText(a),o.innerText="Copied!",e.classList.add("opacity-100")}catch{o.innerText="Copy Failed!",e.classList.add("opacity-100")}window.matchMedia("(hover: hover)").matches||(setTimeout(()=>{e.classList.remove("opacity-100")},1500),setTimeout(()=>{o.innerText=i},1800))}),t.addEventListener("mouseleave",()=>{window.matchMedia("(hover: hover)").matches&&(e.classList.remove("opacity-100"),setTimeout(()=>{o.innerText=i},300))}))}}c();document.addEventListener("DOMContentLoaded",c);</script>  </div> </div> </div> </div> </div> <button class="
+flex justify-center items-center p-2 
+cursor-pointer rounded-full
+text-white bg-white/10 
+hover:bg-white/30 rotate-90
+fixed bottom-4 right-4 z-50 hidden lg:flex
+ back-to-top mr-[2%]" aria-label="Back to top" data-astro-cid-scuu7fyy> <svg class="w-8 h-auto" data-astro-cid-scuu7fyy="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path> </svg> </button> <section id="read-next" class="pt-4 pb-10 mt-10 bg-secondary"> <div class="text-center mb-2"> <h2 class="text-4xl font-bold text-white">Read Next</h2> </div> <!-- Work Card Carousel Container --><div class="flex items-center justify-center gap-2 w-fit mx-auto" data-astro-cid-oyovcjtc> <button id="scroll-left" class="
+hidden md:flex 2xl:hidden p-2
+text-white bg-white/10 rounded-full cursor-pointer
+transition-all duration-300 hover:bg-white/30" aria-label="Scroll left" data-astro-cid-oyovcjtc> <svg class="w-8 h-8" data-astro-cid-oyovcjtc="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path> </svg> </button> <div id="projects-carousel" class="
+scroll-smooth overflow-x-auto hide-scrollbar
+flex mx-auto gap-2 xl:gap-4 px-4 pt-6 pb-2
+w-[19rem] sm:w-[23rem] md:w-[37rem]
+2xl:overflow-visible 2xl:snap-none 2xl:justify-center 2xl:w-full relative" data-astro-cid-oyovcjtc> <div class="flex-shrink-0 w-60 sm:w-70 scroll-snap-center" data-astro-cid-r7kjq4ip> <div class="bg-secondary border-2 border-secondary-accent 
+rounded-xl overflow-hidden flex flex-col h-full 
+will-change-transform transition-all transform duration-300 
+[@media(hover:hover)]:hover:border-sky-700 [@media(hover:hover)]:hover:text-sky-500 
+[@media(hover:hover)]:hover:shadow-[0_0_20px_#3d95f540] [@media(hover:hover)]:hover:-translate-y-2" data-astro-cid-r7kjq4ip> <div class="relative" data-astro-cid-r7kjq4ip> <a href="/projects/dynamic-https-payload-stager" data-astro-cid-r7kjq4ip> <div class="w-full aspect-[204/100] rounded-lg 
+bg-black flex justify-center items-center" data-astro-cid-r7kjq4ip> <!-- If scale exists, then apply the img-class class --><img src="/_astro/dynamic_payload_stager.0vh2wwpQ_ZgFO4C.png" alt="Dynamic HTTP/s Payload Stager" data-astro-cid-r7kjq4ip="true" data-full-src="/_astro/dynamic_payload_stager.0vh2wwpQ.png" data-astro-cid-qqdm6bys="true" loading="lazy" decoding="async" fetchpriority="auto" width="1285" height="630" class="w-auto h-full img-class">  </div> </a> <a class="absolute top-1.5 right-1.5
+flex justify-center items-center p-2 rounded-full
+bg-gray-800/60 text-white hover:bg-gray-800/80 
+transition-colors duration-200 transform" href="https://github.com/andrecrafts/Dynamic-HTTP-Payload-Stager" target="_blank" rel="noopener noreferrer" aria-label="View Project on Github" data-astro-cid-r7kjq4ip> <svg class="w-5 h-5" data-astro-cid-r7kjq4ip="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"> <g transform="translate(12, 12) scale(0.98) translate(-12, -12)"> <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path> </g> </svg> </a> </div> <a href="/projects/dynamic-https-payload-stager" class="m-4 flex flex-col flex-grow overflow-hidden" data-astro-cid-r7kjq4ip> <h3 class="title-clamp text-lg leading-tight font-bold mb-2" title="Dynamic HTTP/s Payload Stager" data-astro-cid-r7kjq4ip>Dynamic HTTP/s Payload Stager</h3> <p class="description-clamp text-sm text-subtle-gray mb-4 break-all" title="A dynamic HTTP/S stager that lets one shellcode loader be reused for different encrypted payloads - no rebuilds." data-astro-cid-r7kjq4ip>A dynamic HTTP/S stager that lets one shellcode loader be reused for different encrypted payloads - no rebuilds.</p> <div class="mt-auto" data-astro-cid-r7kjq4ip> <div title="Payload Stager, C++, Python, EDR Evasion, Red team, Malware Development, C, Hacking, Programming, Encryption, Obfuscation, Malware" class="flex gap-2 mb-4" data-astro-cid-r7kjq4ip>  <span class="whitespace-nowrap text-xs text-white bg-secondary-accent px-1.7 py-1 rounded-md" data-astro-cid-r7kjq4ip>Payload Stager</span><span class="whitespace-nowrap text-xs text-white bg-secondary-accent px-1.7 py-1 rounded-md" data-astro-cid-r7kjq4ip>C++</span><span class="whitespace-nowrap text-xs text-white bg-secondary-accent px-1.7 py-1 rounded-md" data-astro-cid-r7kjq4ip>Python</span> </div> <div class="flex items-center text-sm text-subtle-gray" data-astro-cid-r7kjq4ip> <span class="mr-auto" data-astro-cid-r7kjq4ip>12 Sept 2024</span> <span data-astro-cid-r7kjq4ip>18</span>
+            <svg class="w-5 h-5 text-yellow-400 -mt-1 ml-1" data-astro-cid-r7kjq4ip="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"> <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon> </svg> </div> </div> </a> </div> </div> <div class="flex-shrink-0 w-60 sm:w-70 scroll-snap-center" data-astro-cid-r7kjq4ip> <div class="bg-secondary border-2 border-secondary-accent 
+rounded-xl overflow-hidden flex flex-col h-full 
+will-change-transform transition-all transform duration-300 
+[@media(hover:hover)]:hover:border-sky-700 [@media(hover:hover)]:hover:text-sky-500 
+[@media(hover:hover)]:hover:shadow-[0_0_20px_#3d95f540] [@media(hover:hover)]:hover:-translate-y-2" data-astro-cid-r7kjq4ip> <div class="relative" data-astro-cid-r7kjq4ip> <a href="/posts/convert-bloodhound-legacy-queries-to-ce" data-astro-cid-r7kjq4ip> <div class="w-full aspect-[204/100] rounded-lg 
+bg-black flex justify-center items-center" data-astro-cid-r7kjq4ip> <!-- If scale exists, then apply the img-class class --><img src="/_astro/blood-hound.DWEY7bi5_yIOW0.png" alt="How to Convert Custom Queries from BloodHound Legacy to BloodHound CE" data-astro-cid-r7kjq4ip="true" data-full-src="/_astro/blood-hound.DWEY7bi5.png" data-astro-cid-qqdm6bys="true" loading="lazy" decoding="async" fetchpriority="auto" width="1286" height="630" class="w-auto h-full img-class">  </div> </a> <a class="absolute top-1.5 right-1.5
+flex justify-center items-center p-2 rounded-full
+bg-gray-800/60 text-white hover:bg-gray-800/80 
+transition-colors duration-200 transform" href="https://github.com/andrecrafts/Bloodhound-query-legacy2ce" target="_blank" rel="noopener noreferrer" aria-label="View Project on Github" data-astro-cid-r7kjq4ip> <svg class="w-5 h-5" data-astro-cid-r7kjq4ip="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"> <g transform="translate(12, 12) scale(0.98) translate(-12, -12)"> <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path> </g> </svg> </a> </div> <a href="/posts/convert-bloodhound-legacy-queries-to-ce" class="m-4 flex flex-col flex-grow overflow-hidden" data-astro-cid-r7kjq4ip> <h3 class="title-clamp text-lg leading-tight font-bold mb-2" title="How to Convert Custom Queries from BloodHound Legacy to BloodHound CE" data-astro-cid-r7kjq4ip>How to Convert Custom Queries from BloodHound Legacy to BloodHound CE</h3> <p class="description-clamp text-sm text-subtle-gray mb-4 break-all" title="Complete guide to migrate and convert custom queries from Legacy BloodHound to BloodHound CE (Community Edition)." data-astro-cid-r7kjq4ip>Complete guide to migrate and convert custom queries from Legacy BloodHound to BloodHound CE (Community Edition).</p> <div class="mt-auto" data-astro-cid-r7kjq4ip> <div title="BloodHound, Red Team, Python, Security Tools, Active Directory, Network Security, Pentesting, Hacking, Programming" class="flex gap-2 mb-4" data-astro-cid-r7kjq4ip>  <span class="whitespace-nowrap text-xs text-white bg-secondary-accent px-1.7 py-1 rounded-md" data-astro-cid-r7kjq4ip>BloodHound</span><span class="whitespace-nowrap text-xs text-white bg-secondary-accent px-1.7 py-1 rounded-md" data-astro-cid-r7kjq4ip>Red Team</span><span class="whitespace-nowrap text-xs text-white bg-secondary-accent px-1.7 py-1 rounded-md" data-astro-cid-r7kjq4ip>Python</span> </div> <div class="flex items-center text-sm text-subtle-gray" data-astro-cid-r7kjq4ip> <span class="mr-auto" data-astro-cid-r7kjq4ip>9 Jan 2025</span> <span data-astro-cid-r7kjq4ip>31</span>
+            <svg class="w-5 h-5 text-yellow-400 -mt-1 ml-1" data-astro-cid-r7kjq4ip="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"> <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon> </svg> </div> </div> </a> </div> </div> <div class="flex-shrink-0 w-60 sm:w-70 scroll-snap-center" data-astro-cid-r7kjq4ip> <div class="bg-secondary border-2 border-secondary-accent 
+rounded-xl overflow-hidden flex flex-col h-full 
+will-change-transform transition-all transform duration-300 
+[@media(hover:hover)]:hover:border-sky-700 [@media(hover:hover)]:hover:text-sky-500 
+[@media(hover:hover)]:hover:shadow-[0_0_20px_#3d95f540] [@media(hover:hover)]:hover:-translate-y-2" data-astro-cid-r7kjq4ip> <div class="relative" data-astro-cid-r7kjq4ip> <a href="/posts/bypass-yara-rule-cobaltstrike" data-astro-cid-r7kjq4ip> <div class="w-full aspect-[204/100] rounded-lg 
+bg-black flex justify-center items-center" data-astro-cid-r7kjq4ip> <!-- If scale exists, then apply the img-class class --><img src="/_astro/bypass_yara_f0b627fc_evade_edrs.D_48sdOF_ZHMefM.png" alt="Bypass YARA Rule f0b627fc for CobaltStrike to Evade EDRs" data-astro-cid-r7kjq4ip="true" data-full-src="/_astro/bypass_yara_f0b627fc_evade_edrs.D_48sdOF.png" data-astro-cid-qqdm6bys="true" loading="lazy" decoding="async" fetchpriority="auto" width="1285" height="630" class="w-auto h-full img-class">  </div> </a> <a class="absolute top-1.5 right-1.5
+flex justify-center items-center p-2 rounded-full
+bg-gray-800/60 text-white hover:bg-gray-800/80 
+transition-colors duration-200 transform" href="https://github.com/andrecrafts/CobaltStrike-YARA-Bypass-f0b627fc" target="_blank" rel="noopener noreferrer" aria-label="View Project on Github" data-astro-cid-r7kjq4ip> <svg class="w-5 h-5" data-astro-cid-r7kjq4ip="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"> <g transform="translate(12, 12) scale(0.98) translate(-12, -12)"> <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path> </g> </svg> </a> </div> <a href="/posts/bypass-yara-rule-cobaltstrike" class="m-4 flex flex-col flex-grow overflow-hidden" data-astro-cid-r7kjq4ip> <h3 class="title-clamp text-lg leading-tight font-bold mb-2" title="Bypass YARA Rule f0b627fc for CobaltStrike to Evade EDRs" data-astro-cid-r7kjq4ip>Bypass YARA Rule f0b627fc for CobaltStrike to Evade EDRs</h3> <p class="description-clamp text-sm text-subtle-gray mb-4 break-all" title="Bypass Yara Rule Windows_Trojan_CobaltStrike_f0b627fc by randomizing its shellcode signature using a Python script." data-astro-cid-r7kjq4ip>Bypass Yara Rule Windows_Trojan_CobaltStrike_f0b627fc by randomizing its shellcode signature using a Python script.</p> <div class="mt-auto" data-astro-cid-r7kjq4ip> <div title="EDR Evasion, Cobalt Strike, Python, YARA Evasion, Shellcode, Red Team, Programming" class="flex gap-2 mb-4" data-astro-cid-r7kjq4ip>  <span class="whitespace-nowrap text-xs text-white bg-secondary-accent px-1.7 py-1 rounded-md" data-astro-cid-r7kjq4ip>EDR Evasion</span><span class="whitespace-nowrap text-xs text-white bg-secondary-accent px-1.7 py-1 rounded-md" data-astro-cid-r7kjq4ip>Cobalt Strike</span> </div> <div class="flex items-center text-sm text-subtle-gray" data-astro-cid-r7kjq4ip> <span class="mr-auto" data-astro-cid-r7kjq4ip>16 Oct 2024</span> <span data-astro-cid-r7kjq4ip>40</span>
+            <svg class="w-5 h-5 text-yellow-400 -mt-1 ml-1" data-astro-cid-r7kjq4ip="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"> <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon> </svg> </div> </div> </a> </div> </div> <div class="flex-shrink-0 w-60 sm:w-70 scroll-snap-center" data-astro-cid-r7kjq4ip> <div class="bg-secondary border-2 border-secondary-accent 
+rounded-xl overflow-hidden flex flex-col h-full 
+will-change-transform transition-all transform duration-300 
+[@media(hover:hover)]:hover:border-sky-700 [@media(hover:hover)]:hover:text-sky-500 
+[@media(hover:hover)]:hover:shadow-[0_0_20px_#3d95f540] [@media(hover:hover)]:hover:-translate-y-2" data-astro-cid-r7kjq4ip> <div class="relative" data-astro-cid-r7kjq4ip> <a href="/posts/spoofing-file-details" data-astro-cid-r7kjq4ip> <div class="w-full aspect-[204/100] rounded-lg 
+bg-black flex justify-center items-center" data-astro-cid-r7kjq4ip> <!-- If scale exists, then apply the img-class class --><img src="/_astro/spoofing-file-details.D_yqCAKs_Z8Ob2m.png" alt="Make Your Malware Look Legitimate: Spoofing File Details" data-astro-cid-r7kjq4ip="true" data-full-src="/_astro/spoofing-file-details.D_yqCAKs.png" data-astro-cid-qqdm6bys="true" loading="lazy" decoding="async" fetchpriority="auto" width="1286" height="630" class="w-auto h-full img-class">  </div> </a>  </div> <a href="/posts/spoofing-file-details" class="m-4 flex flex-col flex-grow overflow-hidden" data-astro-cid-r7kjq4ip> <h3 class="title-clamp text-lg leading-tight font-bold mb-2" title="Make Your Malware Look Legitimate: Spoofing File Details" data-astro-cid-r7kjq4ip>Make Your Malware Look Legitimate: Spoofing File Details</h3> <p class="description-clamp text-sm text-subtle-gray mb-4 break-all" title="Learn how to make your malware appear as legitimate software by adding an icon to your malware, and copying file properties from real programs." data-astro-cid-r7kjq4ip>Learn how to make your malware appear as legitimate software by adding an icon to your malware, and copying file properties from real programs.</p> <div class="mt-auto" data-astro-cid-r7kjq4ip> <div title="EDR Evasion, C++, Shellcode, Shellcode Loader, Malware Development, AV Evasion, Red Team, Stealth Techniques, Programming" class="flex gap-2 mb-4" data-astro-cid-r7kjq4ip>  <span class="whitespace-nowrap text-xs text-white bg-secondary-accent px-1.7 py-1 rounded-md" data-astro-cid-r7kjq4ip>EDR Evasion</span><span class="whitespace-nowrap text-xs text-white bg-secondary-accent px-1.7 py-1 rounded-md" data-astro-cid-r7kjq4ip>C++</span><span class="whitespace-nowrap text-xs text-white bg-secondary-accent px-1.7 py-1 rounded-md" data-astro-cid-r7kjq4ip>Shellcode</span> </div> <div class="flex items-center text-sm text-subtle-gray" data-astro-cid-r7kjq4ip> <span class="mr-auto" data-astro-cid-r7kjq4ip>13 Oct 2024</span>  </div> </div> </a> </div> </div>  </div> <button id="scroll-right" class="
+hidden md:flex 2xl:hidden p-2
+text-white bg-white/10 rounded-full cursor-pointer
+transition-all duration-300 hover:bg-white/30 rotate-180" aria-label="Scroll right" data-astro-cid-oyovcjtc> <svg class="w-8 h-8" data-astro-cid-oyovcjtc="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path> </svg> </button> </div> <div id="dots-container" class="carousel-dots flex justify-center
+gap-3 mt-4 2xl:hidden" data-astro-cid-oyovcjtc> <div class="dot
+[@media(hover:hover)]:hover:bg-sky-500
+w-2.5 h-2.5 rounded-full cursor-pointer
+bg-white/30 transition-all duration-200" data-astro-cid-oyovcjtc></div><div class="dot
+[@media(hover:hover)]:hover:bg-sky-500
+w-2.5 h-2.5 rounded-full cursor-pointer
+bg-white/30 transition-all duration-200" data-astro-cid-oyovcjtc></div><div class="dot
+[@media(hover:hover)]:hover:bg-sky-500
+w-2.5 h-2.5 rounded-full cursor-pointer
+bg-white/30 transition-all duration-200" data-astro-cid-oyovcjtc></div><div class="dot
+[@media(hover:hover)]:hover:bg-sky-500
+w-2.5 h-2.5 rounded-full cursor-pointer
+bg-white/30 transition-all duration-200" data-astro-cid-oyovcjtc></div><div class="dot
+[@media(hover:hover)]:hover:bg-sky-500
+w-2.5 h-2.5 rounded-full cursor-pointer
+bg-white/30 transition-all duration-200" data-astro-cid-oyovcjtc></div><div class="dot
+[@media(hover:hover)]:hover:bg-sky-500
+w-2.5 h-2.5 rounded-full cursor-pointer
+bg-white/30 transition-all duration-200" data-astro-cid-oyovcjtc></div><div class="dot
+[@media(hover:hover)]:hover:bg-sky-500
+w-2.5 h-2.5 rounded-full cursor-pointer
+bg-white/30 transition-all duration-200" data-astro-cid-oyovcjtc></div><div class="dot
+[@media(hover:hover)]:hover:bg-sky-500
+w-2.5 h-2.5 rounded-full cursor-pointer
+bg-white/30 transition-all duration-200" data-astro-cid-oyovcjtc></div><div class="dot
+[@media(hover:hover)]:hover:bg-sky-500
+w-2.5 h-2.5 rounded-full cursor-pointer
+bg-white/30 transition-all duration-200" data-astro-cid-oyovcjtc></div><div class="dot
+[@media(hover:hover)]:hover:bg-sky-500
+w-2.5 h-2.5 rounded-full cursor-pointer
+bg-white/30 transition-all duration-200" data-astro-cid-oyovcjtc></div><div class="dot
+[@media(hover:hover)]:hover:bg-sky-500
+w-2.5 h-2.5 rounded-full cursor-pointer
+bg-white/30 transition-all duration-200" data-astro-cid-oyovcjtc></div><div class="dot
+[@media(hover:hover)]:hover:bg-sky-500
+w-2.5 h-2.5 rounded-full cursor-pointer
+bg-white/30 transition-all duration-200" data-astro-cid-oyovcjtc></div><div class="dot
+[@media(hover:hover)]:hover:bg-sky-500
+w-2.5 h-2.5 rounded-full cursor-pointer
+bg-white/30 transition-all duration-200" data-astro-cid-oyovcjtc></div> </div> <script type="module">function u(){const t=document.getElementById("projects-carousel"),i=document.getElementById("dots-container");if(!t||!i)return;const n=Array.from(t.children),o=Array.from(i.children);if(n.length===0||o.length===0)return;const h=window.matchMedia("(min-width: 768px)"),c=window.matchMedia("(min-width: 1536px)"),a=new IntersectionObserver(e=>{const l=e.find(s=>s.isIntersecting);if(!l)return;const m=n.indexOf(l.target);let r;h.matches?r=Math.floor(m/2):r=m,o.forEach((s,f)=>{s.classList.toggle("active",f===r)})},{root:t,threshold:.95});function d(){c.matches?(a.disconnect(),o.forEach(e=>e.classList.remove("active"))):n.forEach(e=>a.observe(e))}c.addEventListener("change",d),d()}document.addEventListener("DOMContentLoaded",u);</script> <script type="module">function m(){const r=document.getElementById("projects-carousel"),c=document.getElementById("scroll-left"),i=document.getElementById("scroll-right"),s=document.getElementById("dots-container");if(!r||!c||!i||!s)return;const t=Array.from(r.children);if(t.length===0)return;const o=Array.from(s.children);if(o.length===0)return;const a=window.matchMedia("(min-width: 768px)");function n(e){const d=t[e];let l="center";e===0?l="center":e===t.length-1&&(l="end"),d.scrollIntoView({behavior:"smooth",inline:l,block:"nearest"})}c.addEventListener("click",()=>{n(0)}),i.addEventListener("click",()=>{n(t.length-1)});for(let e=0;e<o.length;e++)o[e].addEventListener("click",()=>{if(!a.matches){n(e);return}e===0?n(0):e===1&&n(t.length-1)})}document.addEventListener("DOMContentLoaded",m);</script>  <div class="flex justify-center gap-4 flex-col 
+items-center mt-10"> <a class="
+text-white font-bold text-lg
+rounded-lg py-3 px-5
+will-change-transform transform transition-all duration-300 bg-secondary-accent
+hover:ring-white hover:bg-white hover:text-black hover:scale-105" href="/work">View more</a> </div> </section> <div class="lg:hidden" data-astro-cid-scuu7fyy> <div class="back-to-top z-50 lg:hidden fixed bottom-0 left-0 right-0 flex justify-center items-center
+    bg-header border-t border-l border-r border-white/10 rounded-t-lg cursor-pointer" data-astro-cid-scuu7fyy> <svg class="w-6 h-6 rotate-90" data-astro-cid-scuu7fyy="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path> </svg> </div> <astro-modal data-unique-id="modal-toc-trigger" data-trigger-selector="toc-trigger" data-astro-cid-qmzm2soj="true"> <div id="modal-toc-trigger" class="modal-container z-10 fixed inset-0 bg-black/60 flex items-center justify-center p-4" data-astro-cid-qmzm2soj> <div class="bg-header rounded-lg max-w-md md:max-w-2xl max-h-[60vh] flex flex-col" data-astro-cid-qmzm2soj> <header class="py-2 px-3 flex justify-between items-center border-b border-gray-700" data-astro-cid-qmzm2soj> <h2 class="font-semibold text-lg" data-astro-cid-qmzm2soj>Table of Contents</h2> <button class="close-modal-btn cursor-pointer" data-astro-cid-qmzm2soj> <svg class="h-6 w-6" data-astro-cid-qmzm2soj="true" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path> </svg> </button> </header>  <div class="overflow-y-auto scroll-fade-container py-3 px-2 flex-1 md:text-lg" data-astro-cid-qmzm2soj>  <ul class="pl-3 pr-2 " data-astro-cid-xvrfupwn> <li class="toc-h2-item" data-astro-cid-xvrfupwn>  <div class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#introduction" class="toc-link-mobile" data-astro-cid-xvrfupwn> Introduction </a> </div> <div class="h3-list-wrapper" data-astro-cid-xvrfupwn> <ul class="toc-h3-list pl-6 pr-2" data-astro-cid-xvrfupwn>  <li class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#project-demo" class="toc-link-mobile" data-astro-cid-xvrfupwn> Project Demo </a> </li> </ul> </div> </li><li class="toc-h2-item" data-astro-cid-xvrfupwn>  <div class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#support" class="toc-link-mobile" data-astro-cid-xvrfupwn> Support </a> </div>  </li><li class="toc-h2-item" data-astro-cid-xvrfupwn>  <div class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#how-to-hide-a-payload-in-a-image" class="toc-link-mobile" data-astro-cid-xvrfupwn> How to Hide a payload in a Image </a> </div>  </li><li class="toc-h2-item" data-astro-cid-xvrfupwn>  <div class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#fetch-payload-from-disk-via-c" class="toc-link-mobile" data-astro-cid-xvrfupwn> Fetch payload from Disk via C++ </a> </div> <div class="h3-list-wrapper" data-astro-cid-xvrfupwn> <ul class="toc-h3-list pl-6 pr-2" data-astro-cid-xvrfupwn>  <li class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#constants-in-code" class="toc-link-mobile" data-astro-cid-xvrfupwn> Constants in Code </a> </li><li class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#payload-extraction" class="toc-link-mobile" data-astro-cid-xvrfupwn> Payload Extraction </a> </li><li class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#executing-the-payload" class="toc-link-mobile" data-astro-cid-xvrfupwn> Executing the Payload </a> </li> </ul> </div> </li><li class="toc-h2-item" data-astro-cid-xvrfupwn>  <div class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#store-the-image-file-in-the-resources-section-rsrc-of-a-binary-file" class="toc-link-mobile" data-astro-cid-xvrfupwn> Store the Image file in the resources section (.rsrc) of a binary file </a> </div> <div class="h3-list-wrapper" data-astro-cid-xvrfupwn> <ul class="toc-h3-list pl-6 pr-2" data-astro-cid-xvrfupwn>  <li class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#how-to-store-a-image-file-in-the-rsrc-section" class="toc-link-mobile" data-astro-cid-xvrfupwn> How to store a image file in the .rsrc section. </a> </li><li class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#finding-the-resource-file-id-and-type" class="toc-link-mobile" data-astro-cid-xvrfupwn> Finding the Resource file ID and Type </a> </li> </ul> </div> </li><li class="toc-h2-item" data-astro-cid-xvrfupwn>  <div class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#fetch-payload-from-resources-via-winapi" class="toc-link-mobile" data-astro-cid-xvrfupwn> Fetch Payload from Resources via WinAPI </a> </div> <div class="h3-list-wrapper" data-astro-cid-xvrfupwn> <ul class="toc-h3-list pl-6 pr-2" data-astro-cid-xvrfupwn>  <li class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#constants-in-code-1" class="toc-link-mobile" data-astro-cid-xvrfupwn> Constants in Code </a> </li><li class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#payload-extraction-1" class="toc-link-mobile" data-astro-cid-xvrfupwn> Payload Extraction </a> </li> </ul> </div> </li><li class="toc-h2-item" data-astro-cid-xvrfupwn>  <div class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#fetch-payload-from-resources-via-peb" class="toc-link-mobile" data-astro-cid-xvrfupwn> Fetch Payload from Resources via PEB </a> </div> <div class="h3-list-wrapper" data-astro-cid-xvrfupwn> <ul class="toc-h3-list pl-6 pr-2" data-astro-cid-xvrfupwn>  <li class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#constants-in-code-2" class="toc-link-mobile" data-astro-cid-xvrfupwn> Constants in Code </a> </li><li class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#payload-extraction-via-peb-parsing" class="toc-link-mobile" data-astro-cid-xvrfupwn> Payload Extraction via PEB Parsing </a> </li><li class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#hgetcurrentmodulehandle" class="toc-link-mobile" data-astro-cid-xvrfupwn> hGetCurrentModuleHandle </a> </li><li class="line-height-[1.10rem] mb-3 text-wrap wrap-break-word text-slate-400 [@media_(hover:hover)]:hover:text-sky-400 transition-colors" data-astro-cid-xvrfupwn> <a href="#getresourcedata" class="toc-link-mobile" data-astro-cid-xvrfupwn> GetResourceData </a> </li> </ul> </div> </li> </ul>    </div> </div> </div> </astro-modal> <script type="module">function c(s){if(!s)return;const t=()=>{if(!(s.scrollHeight>s.clientHeight)){s.classList.remove("is-scrolling","is-at-top","is-at-bottom");return}const e=s.scrollTop<1,i=s.scrollHeight-s.scrollTop<=s.clientHeight+1;e?(s.classList.add("is-at-top"),s.classList.remove("is-scrolling","is-at-bottom")):i?(s.classList.add("is-at-bottom"),s.classList.remove("is-scrolling","is-at-top")):(s.classList.add("is-scrolling"),s.classList.remove("is-at-top","is-at-bottom"))};s.addEventListener("scroll",t),window.addEventListener("resize",t),new MutationObserver(t).observe(s,{childList:!0,subtree:!0}),t()}document.querySelectorAll(".scroll-fade-container").forEach(s=>{c(s)});</script>  <script type="module">class i extends HTMLElement{connectedCallback(){const r=this.dataset.uniqueId,n=this.dataset.triggerSelector,e=this.querySelector(`#${r}`);if(!e){console.error("Modal container not found!");return}function t(){e.classList.toggle("show")}function c(){const o=document.querySelector(`#${n}`);if(!o){console.error(`Modal trigger element "${n}" not found!`);return}const l=e.querySelector(".close-modal-btn");o.addEventListener("click",t),l?.addEventListener("click",t),e.addEventListener("click",s=>{s.target===e&&t()})}c()}}customElements.define("astro-modal",i);</script>  </div> <astro-modal data-unique-id="modal-share-trigger" data-trigger-selector="share-trigger" data-astro-cid-qmzm2soj="true"> <div id="modal-share-trigger" class="modal-container z-10 fixed inset-0 bg-black/60 flex items-center justify-center p-4" data-astro-cid-qmzm2soj> <div class="bg-header rounded-lg max-w-md md:max-w-2xl max-h-[60vh] flex flex-col" data-astro-cid-qmzm2soj> <header class="py-2 px-3 flex justify-between items-center border-b border-gray-700" data-astro-cid-qmzm2soj> <h2 class="font-semibold text-lg" data-astro-cid-qmzm2soj>Share</h2> <button class="close-modal-btn cursor-pointer" data-astro-cid-qmzm2soj> <svg class="h-6 w-6" data-astro-cid-qmzm2soj="true" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path> </svg> </button> </header>  <div class="scroll-fade-container py-3 px-2 flex-1 md:text-lg" data-astro-cid-qmzm2soj>  <div class="flex items-center gap-2"> <!-- Twitter --> <div class="group relative inline-flex" data-astro-cid-lejbfuzf> <!-- Whatever you put inside the TooltipWrapper tags goes here -->  <a href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fandrecrafts.com%2Fposts%2Fhide-shellcode-in-images%2F&text=Hiding%20Shellcode%20in%20Images%20with%20Python%20and%20C%2FC%2B%2B" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-secondary-accent hover:bg-sky-600 text-subtle-gray hover:text-white transition-all duration-200"> <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"> <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.25 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path> </svg> </a>  <div role="tooltip" class="tooltip
+  absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1.5 
+  text-sm font-medium bg-secondary-accent
+  rounded-md shadow-lg w-max max-w-xs
+  opacity-0 [@media_(hover:hover)]:group-hover:opacity-100
+  transition-opacity duration-300 pointer-events-none
+" data-astro-cid-lejbfuzf> <span class="tooltip-text" data-astro-cid-lejbfuzf>Twitter</span> <div class="tooltip-arrow absolute left-1/2 -translate-x-1/2
+  top-full w-4 h-2
+  bg-secondary-accent
+" data-astro-cid-lejbfuzf></div> </div> </div> <!-- LinkedIn --> <div class="group relative inline-flex" data-astro-cid-lejbfuzf> <!-- Whatever you put inside the TooltipWrapper tags goes here -->  <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fandrecrafts.com%2Fposts%2Fhide-shellcode-in-images%2F" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-secondary-accent hover:bg-sky-600 text-subtle-gray hover:text-white transition-all duration-200"> <svg class="w-5 h-5<" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"> <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path> </svg> </a>  <div role="tooltip" class="tooltip
+  absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1.5 
+  text-sm font-medium bg-secondary-accent
+  rounded-md shadow-lg w-max max-w-xs
+  opacity-0 [@media_(hover:hover)]:group-hover:opacity-100
+  transition-opacity duration-300 pointer-events-none
+" data-astro-cid-lejbfuzf> <span class="tooltip-text" data-astro-cid-lejbfuzf>LinkedIn</span> <div class="tooltip-arrow absolute left-1/2 -translate-x-1/2
+  top-full w-4 h-2
+  bg-secondary-accent
+" data-astro-cid-lejbfuzf></div> </div> </div> <div class="group relative inline-flex" data-astro-cid-lejbfuzf> <!-- Whatever you put inside the TooltipWrapper tags goes here -->  <a href="https://www.reddit.com/submit?url=https%3A%2F%2Fandrecrafts.com%2Fposts%2Fhide-shellcode-in-images%2F&title=Hiding%20Shellcode%20in%20Images%20with%20Python%20and%20C%2FC%2B%2B" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-secondary-accent hover:bg-sky-600 text-subtle-gray hover:text-white transition-all duration-200"> <svg class="w-5 h-5<" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-reddit" viewBox="0 0 16 16"> <path d="M6.167 8a.83.83 0 0 0-.83.83c0 .459.372.84.83.831a.831.831 0 0 0 0-1.661m1.843 3.647c.315 0 1.403-.038 1.976-.611a.23.23 0 0 0 0-.306.213.213 0 0 0-.306 0c-.353.363-1.126.487-1.67.487-.545 0-1.308-.124-1.671-.487a.213.213 0 0 0-.306 0 .213.213 0 0 0 0 .306c.564.563 1.652.61 1.977.61zm.992-2.807c0 .458.373.83.831.83s.83-.381.83-.83a.831.831 0 0 0-1.66 0z"></path> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.828-1.165c-.315 0-.602.124-.812.325-.801-.573-1.9-.945-3.121-.993l.534-2.501 1.738.372a.83.83 0 1 0 .83-.869.83.83 0 0 0-.744.468l-1.938-.41a.2.2 0 0 0-.153.028.2.2 0 0 0-.086.134l-.592 2.788c-1.24.038-2.358.41-3.17.992-.21-.2-.496-.324-.81-.324a1.163 1.163 0 0 0-.478 2.224q-.03.17-.029.353c0 1.795 2.091 3.256 4.669 3.256s4.668-1.451 4.668-3.256c0-.114-.01-.238-.029-.353.401-.181.688-.592.688-1.069 0-.65-.525-1.165-1.165-1.165"></path> </svg> </a>  <div role="tooltip" class="tooltip
+  absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1.5 
+  text-sm font-medium bg-secondary-accent
+  rounded-md shadow-lg w-max max-w-xs
+  opacity-0 [@media_(hover:hover)]:group-hover:opacity-100
+  transition-opacity duration-300 pointer-events-none
+" data-astro-cid-lejbfuzf> <span class="tooltip-text" data-astro-cid-lejbfuzf>Reddit</span> <div class="tooltip-arrow absolute left-1/2 -translate-x-1/2
+  top-full w-4 h-2
+  bg-secondary-accent
+" data-astro-cid-lejbfuzf></div> </div> </div> <!-- Copy Link Button --> <div class="group relative inline-flex copy-button-container" data-astro-cid-lejbfuzf> <!-- Whatever you put inside the TooltipWrapper tags goes here -->  <button class="cursor-pointer p-2 rounded-lg bg-secondary-accent hover:bg-sky-600 text-subtle-gray hover:text-white transition-all duration-200 copy-button" data-text="Copy Link" data-copy-value="https%3A%2F%2Fandrecrafts.com%2Fposts%2Fhide-shellcode-in-images%2F" aria-label="Copy Link" data-astro-cid-74lkg7sv> <!-- Button Content Slot -->  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"></path> </svg>  </button>  <div role="tooltip" class="tooltip
+  absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1.5 
+  text-sm font-medium bg-secondary-accent
+  rounded-md shadow-lg w-max max-w-xs
+  opacity-0 [@media_(hover:hover)]:group-hover:opacity-100
+  transition-opacity duration-300 pointer-events-none
+" data-astro-cid-lejbfuzf> <span class="tooltip-text" data-astro-cid-lejbfuzf>Copy Link</span> <div class="tooltip-arrow absolute left-1/2 -translate-x-1/2
+  top-full w-4 h-2
+  bg-secondary-accent
+" data-astro-cid-lejbfuzf></div> </div> </div>   </div>  </div> </div> </div> </astro-modal>     <dialog id="image-modal" class="modal-container bg-transparent p-0 max-w-full max-h-full w-full h-full backdrop:bg-black/80" data-astro-cid-qj24g3rp> <!-- Modal Content Container --> <div class="modal-container relative w-full h-full flex items-center justify-center p-4 md:p-8" data-astro-cid-qj24g3rp> <!-- Close Button --> <button id="modal-close-btn" class="modal-container outline-none cursor-pointer absolute top-13 right-13 z-20 text-white bg-gray-600 hover:bg-gray-500  rounded-full p-2 transition-colors" aria-label="Close image viewer" data-astro-cid-qj24g3rp> <svg class="w-6 h-6" data-astro-cid-qj24g3rp="true" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path> </svg> </button> <!-- Image Wrapper for zooming --> <div class="modal-container relative w-full h-full flex items-center justify-center" data-astro-cid-qj24g3rp> <img id="modal-image" src="" alt="" class="max-w-full max-h-full object-contain transition-transform duration-300 ease-in-out cursor-zoom-in" data-zoomed="false" data-astro-cid-qj24g3rp> </div> </div> </dialog> <script type="module">document.addEventListener("DOMContentLoaded",()=>{const n=document.getElementById("image-modal"),a=document.querySelectorAll(".modal-container"),e=document.getElementById("modal-image"),c=document.querySelector("article");if(!n||!e||!a||!c)return;c.querySelectorAll(".img-class").forEach(o=>{o.addEventListener("click",()=>{const l=o.dataset.fullSrc||o.src;e.src=l,e.alt=o.alt,e.dataset.zoomed="false",n.showModal(),document.body.style.overflow="hidden"})});function d(o){if(o.stopPropagation(),e.dataset.zoomed==="true")e.dataset.zoomed="false";else{const t=e.getBoundingClientRect(),r=o.clientX-t.left,i=o.clientY-t.top,m=r/t.width*100,f=i/t.height*100;e.style.transformOrigin=`${m}% ${f}%`,e.dataset.zoomed="true"}}e.addEventListener("click",d);const s=()=>{n.close(),document.body.style.overflow=""};for(const o of a)o.addEventListener("click",s)});</script>   </main> <footer id="contact" class="bg-header border-t-1 border-white " data-astro-cid-sz7xmlte> <div class="container mx-auto pt-8 pb-10 px-4 text-center" data-astro-cid-sz7xmlte> <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6 2xl:mb-4" data-astro-cid-sz7xmlte>
+Let's Build Something Together
+</h2> <p class="mb-6 text-lg" data-astro-cid-sz7xmlte>
+Have a project in mind or just want to chat?
+<br data-astro-cid-sz7xmlte>Feel free to reach out at
+<span id="email-text" class="font-bold" data-astro-cid-sz7xmlte>andrecrafts.work@gmail.com</span> <button id="copy-button" class="-mt-1 -ml-0.5 
+relative group inline-flex items-baseline 
+highlight-btn cursor-pointer transition-colors duration-300
+" aria-label="Copy email address" data-astro-cid-sz7xmlte> <svg class="w-6 h-6 translate-y-1.7" data-astro-cid-sz7xmlte="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"> <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path> </svg> <div id="tooltip" role="tooltip" class="
+absolute md:text-nowrap -top-7.1 left-1/2 -translate-x-1/2 z-10 px-1 py-1 
+text-sm font-medium text-white bg-secondary-accent 
+rounded-sm shadow-sm opacity-0 
+[@media_(hover:hover)]:group-hover:opacity-100 pointer-events-none transition-opacity duration-300" data-astro-cid-sz7xmlte> <span id="tooltip-text" data-astro-cid-sz7xmlte>Copy email</span> <div class="
+tooltip-arrow absolute w-3 h-1.5 top-full left-1/2 -translate-x-1/2" data-astro-cid-sz7xmlte></div> </div> </button> </p> <a href="https://cal.com/andrecrafts/meet" target="_blank" rel="noopener noreferrer" aria-label="Google Calendar Meeting" class="
+  text-white text-lg font-bold 
+  py-3 px-6 mb-8 rounded-lg inline-block 
+  bg-sky-500 transition-all duration-300
+  hover:scale-105 hover:bg-sky-400 transform will-change-transform" data-astro-cid-sz7xmlte>
+Schedule Meeting
+</a> <div class="flex justify-center space-x-6 mb-6" data-astro-cid-sz7xmlte> <a href="https://github.com/andrecrafts" target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="hover:text-sky-500 transition-colors duration-300" data-astro-cid-sz7xmlte> <svg class="w-8 h-8" data-astro-cid-sz7xmlte="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"> <g transform="translate(12, 12) scale(0.98) translate(-12, -12)"> <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path> </g> </svg> </a> <a href="https://linkedin.com/in/andre0liveira" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="hover:text-sky-500 transition-colors duration-300" data-astro-cid-sz7xmlte> <svg class="w-8 h-8" data-astro-cid-sz7xmlte="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"> <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path> </svg> </a> </div> <p class="text-sm text-slate-300" data-astro-cid-sz7xmlte>
+© 2025 AndreCrafts. All Rights Reserved.
+</p> </div> </footer> <script type="module">function a(){const t=document.getElementById("copy-button"),e=document.getElementById("tooltip"),o=document.getElementById("tooltip-text");!t||!e||!o||(t.addEventListener("click",async()=>{try{await navigator.clipboard.writeText("andrecrafts.work@gmail.com"),o.innerText="Copied!",e.classList.add("opacity-100")}catch(n){console.error(n);return}window.matchMedia("(hover: hover)").matches||(t.classList.add("highlight-btn"),setTimeout(()=>{e.classList.remove("opacity-100"),t.classList.remove("highlight-btn")},1500),setTimeout(()=>{o.innerText="Copy email"},1800))}),t.addEventListener("mouseleave",()=>{window.matchMedia("(hover: hover)").matches&&(e.classList.remove("opacity-100"),setTimeout(()=>{o.innerText="Copy email"},300))}))}document.addEventListener("DOMContentLoaded",a);</script>  </body></html>   <script type="module">document.addEventListener("DOMContentLoaded",()=>{const e=document.getElementById("tags-wrapper"),t=document.getElementById("show-all-btn"),n=document.getElementById("show-less-btn");if(!e||!t||!n)return;const s=()=>{const d=e.getAttribute("aria-expanded")==="true";e.setAttribute("aria-expanded",String(!d)),d?t.focus():n.focus()};t.addEventListener("click",s),n.addEventListener("click",s)});</script> <script type="module">function e(o,t){window.scrollY>t?o.classList.add("show"):o.classList.remove("show")}function s(){window.scrollTo({top:0,behavior:"smooth"})}function i(){const o=document.querySelectorAll(".back-to-top");if(o.length===0)return;const t=200;for(const n of o)n.addEventListener("click",s);window.addEventListener("scroll",()=>{for(const n of o)e(n,t)})}document.addEventListener("DOMContentLoaded",i);</script> <script type="module">function n(){const e=document.querySelector('h2[data-active="true"], h3[data-active="true"]');if(document.querySelectorAll("a.toc-link-mobile").forEach(t=>t.setAttribute("data-active","false")),e){const t=e.id,o=document.querySelector(`a.toc-link-mobile[href="#${t}"]`);o?.setAttribute("data-active","true"),o?.scrollIntoView({behavior:"smooth",block:"center"})}}function l(){const e=document.getElementById("modal-toc-trigger"),c=document.getElementById("toc-trigger"),t=document.querySelectorAll(".toc-link-mobile");if(!e||!c||!t)return;function o(){e.classList.toggle("show")}c.addEventListener("click",()=>{n()}),t.forEach(i=>{i.addEventListener("click",o)})}document.addEventListener("DOMContentLoaded",l);</script> 
