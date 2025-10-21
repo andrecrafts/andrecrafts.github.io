@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en" data-mode="dark" class="scroll-smooth" data-astro-cid-ouamjn2i> <head><!-- Basic Meta Tags --><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="Astro v5.14.4"><!-- Icons & Links --><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/png" href="/favicon.png" sizes="96x96"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="sitemap" href="/sitemap-index.xml"><link rel="canonical" href="https://andrecrafts.com"><!-- Page Title & Description --><title>Production-Ready DevSecOps - Part 1: Architecture Design</title><meta name="description" content="DevSecOps architecture blueprint for building enterprise-grade production applications with security, high delivery, and low costs using GitOps, Kubernetes, and AWS."><!-- Social Media / Open Graph Tags --><meta property="og:title" content="Production-Ready DevSecOps - Part 1: Architecture Design | AndreCrafts"><meta property="og:description" content="DevSecOps architecture blueprint for building enterprise-grade production applications with security, high delivery, and low costs using GitOps, Kubernetes, and AWS."><meta property="og:type" content="website"><meta property="og:url" content="https://andrecrafts.com/posts/production-ready-devsecops-part-1-architecture-design/"><meta property="og:image" content="https://andrecrafts.com/heroImages/prod-ready-devsecops-part-1.png"><meta property="twitter:card" content="summary_large_image"><link rel="stylesheet" href="/_astro/about.BeZ1qm9u.css">
+<!DOCTYPE html><html lang="en" data-mode="dark" class="scroll-smooth" data-astro-cid-ouamjn2i> <head><!-- Basic Meta Tags --><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="Astro v5.14.6"><!-- Icons & Links --><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/png" href="/favicon.png" sizes="96x96"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="sitemap" href="/sitemap-index.xml"><link rel="canonical" href="https://andrecrafts.com"><!-- Page Title & Description --><title>Production-Ready DevSecOps - Part 1: Architecture Design</title><meta name="description" content="DevSecOps architecture blueprint for building enterprise-grade production applications with security, high delivery, and low costs using GitOps, Kubernetes, and AWS."><!-- Social Media / Open Graph Tags --><meta property="og:title" content="Production-Ready DevSecOps - Part 1: Architecture Design | AndreCrafts"><meta property="og:description" content="DevSecOps architecture blueprint for building enterprise-grade production applications with security, high delivery, and low costs using GitOps, Kubernetes, and AWS."><meta property="og:type" content="website"><meta property="og:url" content="https://andrecrafts.com/posts/production-ready-devsecops-part-1-architecture-design/"><meta property="og:image" content="https://andrecrafts.com/heroImages/prod-ready-devsecops-part-1.png"><meta property="twitter:card" content="summary_large_image"><link rel="stylesheet" href="/_astro/about.Dnn_zr5G.css">
 <style>@font-face{font-family:Inter;src:url(/fonts/Inter.ttf) format("truetype-variations");font-weight:100 900;font-display:swap;font-style:normal}@font-face{font-family:Montserrat;src:url(/fonts/Montserrat.ttf) format("truetype-variations");font-weight:100 900;font-display:swap;font-style:normal}header[data-astro-cid-3ef6ksr2]#main-header[aria-expanded=true],header[data-astro-cid-3ef6ksr2]#main-header[data-scrolled=true]{background-color:color-mix(in srgb,var(--colors-header) var(--un-bg-opacity),transparent);transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,--un-gradient-from,--un-gradient-via,--un-gradient-to;transition-timing-function:var(--un-ease, var(--default-transition-timingFunction));transition-duration:var(--un-duration, var(--default-transition-duration));--un-duration:.3s;transition-duration:.3s}@supports (color: color-mix(in lab,red,red)){header[data-astro-cid-3ef6ksr2]#main-header[aria-expanded=true],header[data-astro-cid-3ef6ksr2]#main-header[data-scrolled=true]{background-color:color-mix(in oklab,var(--colors-header) var(--un-bg-opacity),transparent)}}a[data-astro-cid-3ef6ksr2][aria-current=page]{color:var(--color-sky-500)}.highlight-btn[data-astro-cid-sz7xmlte]:hover{color:color-mix(in srgb,var(--colors-sky-400) var(--un-text-opacity),transparent)}@property --un-text-opacity{syntax:"<percentage>";inherits:false;initial-value:100%;}@supports (color: color-mix(in lab,red,red)){.highlight-btn[data-astro-cid-sz7xmlte]:hover{color:color-mix(in oklab,var(--colors-sky-400) var(--un-text-opacity),transparent)}}.tooltip-arrow[data-astro-cid-sz7xmlte]{background-color:color-mix(in srgb,var(--colors-secondary-accent) var(--un-bg-opacity),transparent);clip-path:polygon(50% 100%,0 0,100% 0)}@property --un-bg-opacity{syntax:"<percentage>";inherits:false;initial-value:100%;}@supports (color: color-mix(in lab,red,red)){.tooltip-arrow[data-astro-cid-sz7xmlte]{background-color:color-mix(in oklab,var(--colors-secondary-accent) var(--un-bg-opacity),transparent)}}:root{@media (min-width: 1024px){font-size:1.27rem}--background: hsl(214, 44%, 8%)}html{scroll-padding-top:3rem}
 </style>
 <link rel="stylesheet" href="/_astro/_slug_.xiPQw92k.css">
@@ -36,6 +36,8 @@ Table of Contents
 <li><strong>Cost Optimization</strong>: 50-60% infrastructure cost reduction through GitOps and optimized resource management</li>
 <li><strong>Security</strong>: 70-80% fewer vulnerabilities reaching production via shift-left security practices</li>
 <li><strong>Speed</strong>: Faster delivery with automated pipelines and ephemeral preview environments</li>
+<li><strong>Reliability</strong>: 99.9%+ uptime with multi-AZ deployments and automated rollbacks</li>
+<li><strong>Developer Experience:</strong> **Faster feedback loops with preview environments and automated testing</li>
 </ul>
 <h2 id="simpler-alternatives-to-kubernetes">Simpler Alternatives to Kubernetes</h2>
 <p>While this guide uses <strong>Kubernetes</strong> for its rich ecosystem and portability, the same architectural blueprint (GitOps workflows, shift-left security, CI/CD pipelines, observability patterns) applies to simpler orchestration platforms.</p>
@@ -56,8 +58,8 @@ Table of Contents
 <li><strong>50-60% cost reduction</strong> across teams</li>
 <li><strong>Improved security</strong> through automated scanning and GitOps practices</li>
 <li><strong>Faster code delivery</strong> with streamlined, automated processes</li>
-<li><strong>Effortless scaling</strong> without operational overhead</li>
-<li><strong>Enhanced reliability</strong> through automated rollbacks and drift prevention</li>
+<li><strong>Improved reliability</strong> through automated rollbacks, drift prevention, and disaster recovery in minutes</li>
+<li><strong>Complete audit trail</strong> for compliance through Git history of all infrastructure changes</li>
 </ul>
 <h2 id="why-devsecops">Why DevSecOps?</h2>
 <p><strong>Traditionally,</strong> security testing is only at the end, which creates bottlenecks and expensive fixes.</p>
@@ -65,14 +67,14 @@ Table of Contents
 <h3 id="results--benefits">Results &amp; Benefits</h3>
 <ul>
 <li><strong>70-80% reduction</strong> in vulnerabilities reaching production</li>
-<li><strong>Early detection</strong>: Vulnerabilities caught during development, not testing</li>
-<li><strong>Reduced costs</strong>: Early fixes cost significantly less than production remediation</li>
-<li><strong>Faster time to market</strong> with security built-in</li>
+<li><strong>Reduced remediation costs</strong> by catching vulnerabilities early in development</li>
+<li><strong>Faster time to market</strong> with security integrated from day one</li>
+<li><strong>Compliance-ready</strong> with automated scans and audit trails for regulatory requirements</li>
 </ul>
 <h2 id="application-architecture-overview">Application Architecture Overview</h2>
 <p><strong>Easy Upload</strong> is a web application that handles file uploads and processing. This design demonstrates real-world complexity, perfect for showcasing DevSecOps architecture patterns.</p>
 <h3 id="demo-of-app-working">Demo of App Working</h3>
-<video src="/_astro/demo_easyupload.DKfDeE0w.mp4" controls frameborder="0" loop muted="true" class="astro-rk4szbjr" data-astro-cid-rk4szbjr>
+<video src="/_astro/demo_easyupload.DKfDeE0w.mp4" controls frameborder="0" loop muted class="astro-rk4szbjr" data-astro-cid-rk4szbjr>
 Sorry, your browser doesn't support embedded videos.
 </video> 
 <h3 id="how-it-works">How it Works</h3>
@@ -100,10 +102,18 @@ Sorry, your browser doesn't support embedded videos.
 </ol>
 <h3 id="architecture-benefits">Architecture Benefits</h3>
 <ul>
-<li><strong>BFF Pattern</strong>: Keeps frontend simple and cheap (S3 + CDN) while API handles all business logic.</li>
-<li><strong>Async Processing</strong>: Heavy file processing runs separately from user-facing API, ensuring fast responses and independent scaling.</li>
-<li><strong>Cost Optimization</strong>: S3 lifecycle policies automatically clean up temporary files to prevent storage bloat.</li>
-<li><strong>Independent Scaling</strong>: Frontend, API, and worker services scale based on their specific demands.</li>
+<li><strong>Cost Optimization:</strong>
+<ul>
+<li><strong>Backend for Frontend Pattern</strong>: API handles all business logic, keeping frontend static for CDN caching and minimal hosting costs</li>
+<li><strong>S3 Storage Optimization</strong>: Automated lifecycle policies transition files to cheaper storage tiers</li>
+</ul>
+</li>
+<li><strong>Microservices Architecture:</strong>
+<ul>
+<li><strong>Independent Services</strong>: Frontend, API, and Workers scale based on demand with isolated failures and security boundaries</li>
+<li><strong>Async Processing</strong>: Fast user-facing API responses by offloading heavy processing to background workers</li>
+</ul>
+</li>
 </ul>
 <h2 id="infrastructure-stack">Infrastructure Stack</h2>
 <p>The infrastructure is heavily automated, using managed cloud services balanced with Kubernetes workloads for simplicity, security, and flexibility.</p>
@@ -159,11 +169,12 @@ Sorry, your browser doesn't support embedded videos.
 </ul>
 <h3 id="why-this-infrastructure-design">Why This Infrastructure Design</h3>
 <ul>
-<li><strong>EKS + Managed Services</strong>: Perfect balance of control (Kubernetes workloads) and simplicity (AWS managed database, cache, secrets).</li>
-<li><strong>Terraform</strong>: Ensures reproducible, auditable infrastructure with mandatory change reviews.</li>
-<li><strong>Multi-AZ + Autoscaling</strong>: Guarantees high availability while optimizing costs through elastic scaling.</li>
-<li><strong>Comprehensive Observability</strong>: Proactive monitoring with distributed tracing (Tempo), metrics (Prometheus), and centralized logging (Loki) prevents downtime and speeds up incident resolution.</li>
-<li><strong>Security by Design</strong>: WAF, Pod Security Admission, network policies, pod identity, and secret management enforce least privilege and limit breach impact.</li>
+<li><strong>Vendor-Agnostic without Operational Burden</strong>: Managed services based on open standards (e.g. Kubernetes, PostgreSQL) enable deployment on any cloud or on-premise, preventing vendor lock-in while providing high availability and reducing operational complexity.</li>
+<li><strong>Cost-Effective by Design</strong>: Elastic scaling with Spot instances and optimized storage policies reduce infrastructure costs.</li>
+<li><strong>Reproducible &amp; Auditable</strong>: Terraform and GitOps ensure consistent deployments, complete code change history for compliance, and instant rollback capability.</li>
+<li><strong>High Availability &amp; Resilience</strong>: Multi-AZ deployments eliminate single points of failure while automated scaling and progressive rollouts ensure availability</li>
+<li><strong>Comprehensive Observability</strong>: Distributed tracing (Tempo), metrics (Prometheus), and centralized logging (Loki) enable proactive monitoring that prevents downtime and accelerates incident resolution</li>
+<li><strong>Defense-in-Depth Security</strong>: Multiple protection layers (WAF, Pod Security Admission, network policies, pod identity, secrets management) enforce least privilege and limit blast radius of security incidents</li>
 </ul>
 <h2 id="platform-infrastructure-pipeline-terraform">Platform Infrastructure Pipeline (Terraform)</h2>
 <p>The infrastructure defined in Terraform has a dedicated pipeline ensuring all infrastructure changes are code-reviewed, security-scanned, and automatically applied.</p>
@@ -185,7 +196,7 @@ Sorry, your browser doesn't support embedded videos.
 <li><strong>Code-Reviewed Infrastructure</strong>: Eliminates risky manual console changes through mandatory PR reviews.</li>
 <li><strong>Automated Security Scanning</strong>: Catches misconfigurations before they reach production.</li>
 <li><strong>Plan + Apply Separation</strong>: Safer deployments with full visibility into changes before execution.</li>
-<li><strong>Git as Source of Truth</strong>: Complete audit trail of every infrastructure modification.</li>
+<li><strong>Git as Source of Truth</strong>: Complete audit trail and automated drift prevention through Git history</li>
 </ul>
 <h2 id="application-cicd-pipeline-gitops">Application CI/CD Pipeline (GitOps)</h2>
 <ul>
@@ -313,12 +324,19 @@ Sorry, your browser doesn't support embedded videos.
 </ol>
 <h3 id="why-this-approach-1">Why This Approach</h3>
 <ul>
-<li><strong>Trunk-Based Development</strong>: Keeps main branch always deployable and minimizes merge conflicts.</li>
-<li><strong>Preview Environments</strong>: Enable rapid realistic feedback without disrupting staging environment.</li>
-<li><strong>Separated Repositories</strong>: App code and deployment configs evolve independently, reducing coupling risks.</li>
-<li><strong>Shift-Left Security</strong>: SAST, DAST, and dependency scanning catch vulnerabilities early in development.</li>
-<li><strong>Automated Testing</strong>: E2E and performance tests validate functionality and scalability.</li>
-<li><strong>Progressive Delivery</strong>: Argo Rollouts provide safe, automated canary deployments with gradual rollout and instant rollback capability.</li>
+<li><strong>Infrastructure Cost Optimization</strong>: Eliminates permanent dev/test/staging environments through local development, ephemeral previews, and on-demand staging with only production running 24/7 on reserved instances</li>
+<li><strong>Early Vulnerability Detection</strong>: Shift-left security with SAST, DAST, and dependency scanning catches issues during development</li>
+<li><strong>Git as Source of Truth</strong>:
+<ul>
+<li><strong>Complete audit trail</strong> for compliance through Git history of all infrastructure changes</li>
+<li><strong>Prevents configuration drift</strong> through Git-only deployments and mandatory code review</li>
+</ul>
+</li>
+<li><strong>Safe Deployment Process</strong>: Argo Rollouts enable progressive canary releases with automatic rollback on failure</li>
+<li><strong>Reduced Merge Conflicts</strong>: Trunk-based development keeps main always deployable with frequent merges</li>
+<li><strong>Fast Feature Validation</strong>: Ephemeral preview environments validate code against real cloud services without waiting for staging environment</li>
+<li><strong>Independent Changes</strong>: App code and infrastructure updates occur separately without affecting each other</li>
+<li><strong>Validated Deployments</strong>: Automated E2E and performance testing ensures production readiness</li>
 </ul>
 <h2 id="local-development-strategy">Local Development Strategy</h2>
 <p>The local development environment mirrors production architecture while enabling rapid iteration. Developers can spin up the complete stack (API, Worker services, PostgreSQL, Redis, and S3-compatible storage) with full IDE integration through containerized development.</p>
@@ -333,8 +351,9 @@ Sorry, your browser doesn't support embedded videos.
 <li><strong>Production Parity</strong>: Docker Compose mirrors production services with shared configuration, eliminating “works on my machine” issues</li>
 <li><strong>Quick Onboarding</strong>: Standardized Docker Compose setup enables new developers to get productive quickly with one-click environment initialization</li>
 <li><strong>Fast Feedback Loop</strong>: Hot-reloading and pre-commit hooks provide immediate local validation before CI pipeline</li>
+<li><strong>Cost Savings</strong>: Local development eliminates cloud resource consumption for work-in-progress code</li>
 <li><strong>Development in Containers</strong>: VSCode’s <a href="https://code.visualstudio.com/docs/devcontainers/containers">Dev Containers</a> extension enables development directly inside containers with full IntelliSense and debugging</li>
-<li><strong>Flexible Preview Options</strong>:
+<li><strong>Ephemeral Preview Options</strong>:
 <ul>
 <li><strong>Full-stack previews</strong>: Deploy PRs to ephemeral cloud environments (frontend, backend, workers) for complete validation before staging/production</li>
 <li><strong>Hybrid previews</strong>: Spin up ephemeral cloud dependencies (S3, RDS, Redis) and connect them to local Docker Compose for testing features without full stack costs</li>
@@ -479,7 +498,7 @@ will-change-transform transition-all transform duration-300
 bg-black flex justify-center items-center" data-astro-cid-r7kjq4ip> <!-- If scale exists, then apply the img-class class --><img src="/_astro/hiding_shellcode_in_Images.DZ1-0QCA_Z2a1HO.png" alt="Hiding Shellcode in Images with Python and C/C++" data-astro-cid-r7kjq4ip="true" data-full-src="/_astro/hiding_shellcode_in_Images.DZ1-0QCA.png" data-astro-cid-qqdm6bys="true" loading="lazy" decoding="async" fetchpriority="auto" width="1286" height="630" class="w-auto h-full img-class">  </div> </a> <a class="absolute top-1.5 right-1.5
 flex justify-center items-center p-2 rounded-full
 bg-gray-800/60 text-white hover:bg-gray-800/80 
-transition-colors duration-200 transform" href="https://github.com/andrecrafts/hide-payload-in-images" target="_blank" rel="noopener noreferrer" aria-label="View Project on Github" data-astro-cid-r7kjq4ip> <svg class="w-5 h-5" data-astro-cid-r7kjq4ip="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"> <g transform="translate(12, 12) scale(0.98) translate(-12, -12)"> <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path> </g> </svg> </a> </div> <a href="/posts/hide-shellcode-in-images" class="m-4 flex flex-col flex-grow overflow-hidden" data-astro-cid-r7kjq4ip> <h3 class="title-clamp text-lg leading-tight font-bold mb-2" title="Hiding Shellcode in Images with Python and C/C++" data-astro-cid-r7kjq4ip>Hiding Shellcode in Images with Python and C/C++</h3> <p class="description-clamp text-sm text-subtle-gray mb-4 break-all" title="Learn how to hide shellcode payloads in plain sight by embedding them into image files, such as PNGs, using Python." data-astro-cid-r7kjq4ip>Learn how to hide shellcode payloads in plain sight by embedding them into image files, such as PNGs, using Python.</p> <div class="mt-auto" data-astro-cid-r7kjq4ip> <div title="Python, C++, Malware, Red Team, EDR Evasion, Cybersecurity, Hacking, Steganography, Payload Hiding, Programming" class="flex gap-2 mb-4" data-astro-cid-r7kjq4ip>  <span class="whitespace-nowrap text-xs text-white bg-secondary-accent px-1.7 py-1 rounded-md" data-astro-cid-r7kjq4ip>Python</span><span class="whitespace-nowrap text-xs text-white bg-secondary-accent px-1.7 py-1 rounded-md" data-astro-cid-r7kjq4ip>C++</span><span class="whitespace-nowrap text-xs text-white bg-secondary-accent px-1.7 py-1 rounded-md" data-astro-cid-r7kjq4ip>Malware</span> </div> <div class="flex items-center text-sm text-subtle-gray" data-astro-cid-r7kjq4ip> <span class="mr-auto" data-astro-cid-r7kjq4ip>17 Dec 2024</span> <span data-astro-cid-r7kjq4ip>195</span>
+transition-colors duration-200 transform" href="https://github.com/andrecrafts/hide-payload-in-images" target="_blank" rel="noopener noreferrer" aria-label="View Project on Github" data-astro-cid-r7kjq4ip> <svg class="w-5 h-5" data-astro-cid-r7kjq4ip="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"> <g transform="translate(12, 12) scale(0.98) translate(-12, -12)"> <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path> </g> </svg> </a> </div> <a href="/posts/hide-shellcode-in-images" class="m-4 flex flex-col flex-grow overflow-hidden" data-astro-cid-r7kjq4ip> <h3 class="title-clamp text-lg leading-tight font-bold mb-2" title="Hiding Shellcode in Images with Python and C/C++" data-astro-cid-r7kjq4ip>Hiding Shellcode in Images with Python and C/C++</h3> <p class="description-clamp text-sm text-subtle-gray mb-4 break-all" title="Learn how to hide shellcode payloads in plain sight by embedding them into image files, such as PNGs, using Python." data-astro-cid-r7kjq4ip>Learn how to hide shellcode payloads in plain sight by embedding them into image files, such as PNGs, using Python.</p> <div class="mt-auto" data-astro-cid-r7kjq4ip> <div title="Python, C++, Malware, Red Team, EDR Evasion, Cybersecurity, Hacking, Steganography, Payload Hiding, Programming" class="flex gap-2 mb-4" data-astro-cid-r7kjq4ip>  <span class="whitespace-nowrap text-xs text-white bg-secondary-accent px-1.7 py-1 rounded-md" data-astro-cid-r7kjq4ip>Python</span><span class="whitespace-nowrap text-xs text-white bg-secondary-accent px-1.7 py-1 rounded-md" data-astro-cid-r7kjq4ip>C++</span><span class="whitespace-nowrap text-xs text-white bg-secondary-accent px-1.7 py-1 rounded-md" data-astro-cid-r7kjq4ip>Malware</span> </div> <div class="flex items-center text-sm text-subtle-gray" data-astro-cid-r7kjq4ip> <span class="mr-auto" data-astro-cid-r7kjq4ip>17 Dec 2024</span> <span data-astro-cid-r7kjq4ip>196</span>
             <svg class="w-5 h-5 text-yellow-400 -mt-1 ml-1" data-astro-cid-r7kjq4ip="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"> <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon> </svg> </div> </div> </a> </div> </div> <div class="flex-shrink-0 w-60 sm:w-70 scroll-snap-center" data-astro-cid-r7kjq4ip> <div class="bg-secondary border-2 border-secondary-accent 
 rounded-xl overflow-hidden flex flex-col h-full 
 will-change-transform transition-all transform duration-300 
