@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en" data-mode="dark" class="scroll-smooth" data-astro-cid-ouamjn2i> <head><!-- Basic Meta Tags --><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="Astro v5.14.6"><!-- Icons & Links --><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/png" href="/favicon.png" sizes="96x96"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="sitemap" href="/sitemap-index.xml"><link rel="canonical" href="https://andrecrafts.com"><!-- Page Title & Description --><title>Production-Ready DevSecOps - Part 1: Architecture Design</title><meta name="description" content="DevSecOps architecture blueprint for building enterprise-grade production applications with security, high delivery, and low costs using GitOps, Kubernetes, and AWS."><!-- Social Media / Open Graph Tags --><meta property="og:title" content="Production-Ready DevSecOps - Part 1: Architecture Design | AndreCrafts"><meta property="og:description" content="DevSecOps architecture blueprint for building enterprise-grade production applications with security, high delivery, and low costs using GitOps, Kubernetes, and AWS."><meta property="og:type" content="website"><meta property="og:url" content="https://andrecrafts.com/posts/production-ready-devsecops-part-1-architecture-design/"><meta property="og:image" content="https://andrecrafts.com/heroImages/prod-ready-devsecops-part-1.png"><meta property="twitter:card" content="summary_large_image"><link rel="stylesheet" href="/_astro/about.CKprKv7H.css">
+<!DOCTYPE html><html lang="en" data-mode="dark" class="scroll-smooth" data-astro-cid-ouamjn2i> <head><!-- Basic Meta Tags --><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="Astro v5.14.6"><!-- Icons & Links --><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/png" href="/favicon.png" sizes="96x96"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="sitemap" href="/sitemap-index.xml"><link rel="canonical" href="https://andrecrafts.com"><!-- Page Title & Description --><title>Production-Ready DevSecOps - Part 1: Architecture Design</title><meta name="description" content="DevSecOps architecture blueprint for building enterprise-grade production applications with security, high delivery, and low costs using GitOps, Kubernetes, and AWS."><!-- Social Media / Open Graph Tags --><meta property="og:title" content="Production-Ready DevSecOps - Part 1: Architecture Design | AndreCrafts"><meta property="og:description" content="DevSecOps architecture blueprint for building enterprise-grade production applications with security, high delivery, and low costs using GitOps, Kubernetes, and AWS."><meta property="og:type" content="website"><meta property="og:url" content="https://andrecrafts.com/posts/production-ready-devsecops-part-1-architecture-design/"><meta property="og:image" content="https://andrecrafts.com/heroImages/prod-ready-devsecops-part-1.png"><meta property="twitter:card" content="summary_large_image"><link rel="stylesheet" href="/_astro/about.CeqsrrpA.css">
 <style>@font-face{font-family:Inter;src:url(/fonts/Inter.ttf) format("truetype-variations");font-weight:100 900;font-display:swap;font-style:normal}@font-face{font-family:Montserrat;src:url(/fonts/Montserrat.ttf) format("truetype-variations");font-weight:100 900;font-display:swap;font-style:normal}header[data-astro-cid-3ef6ksr2]#main-header[aria-expanded=true],header[data-astro-cid-3ef6ksr2]#main-header[data-scrolled=true]{background-color:color-mix(in srgb,var(--colors-header) var(--un-bg-opacity),transparent);transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,--un-gradient-from,--un-gradient-via,--un-gradient-to;transition-timing-function:var(--un-ease, var(--default-transition-timingFunction));transition-duration:var(--un-duration, var(--default-transition-duration));--un-duration:.3s;transition-duration:.3s}@supports (color: color-mix(in lab,red,red)){header[data-astro-cid-3ef6ksr2]#main-header[aria-expanded=true],header[data-astro-cid-3ef6ksr2]#main-header[data-scrolled=true]{background-color:color-mix(in oklab,var(--colors-header) var(--un-bg-opacity),transparent)}}a[data-astro-cid-3ef6ksr2][aria-current=page]{color:var(--color-sky-500)}.highlight-btn[data-astro-cid-sz7xmlte]:hover{color:color-mix(in srgb,var(--colors-sky-400) var(--un-text-opacity),transparent)}@property --un-text-opacity{syntax:"<percentage>";inherits:false;initial-value:100%;}@supports (color: color-mix(in lab,red,red)){.highlight-btn[data-astro-cid-sz7xmlte]:hover{color:color-mix(in oklab,var(--colors-sky-400) var(--un-text-opacity),transparent)}}.tooltip-arrow[data-astro-cid-sz7xmlte]{background-color:color-mix(in srgb,var(--colors-secondary-accent) var(--un-bg-opacity),transparent);clip-path:polygon(50% 100%,0 0,100% 0)}@property --un-bg-opacity{syntax:"<percentage>";inherits:false;initial-value:100%;}@supports (color: color-mix(in lab,red,red)){.tooltip-arrow[data-astro-cid-sz7xmlte]{background-color:color-mix(in oklab,var(--colors-secondary-accent) var(--un-bg-opacity),transparent)}}:root{@media (min-width: 1024px){font-size:1.27rem}--background: hsl(214, 44%, 8%)}html{scroll-padding-top:3rem}
 </style>
 <link rel="stylesheet" href="/_astro/_slug_.xiPQw92k.css">
@@ -141,15 +141,22 @@ Sorry, your browser doesn't support embedded videos.
 <li><strong>DNS &amp; TLS:</strong> AWS Route 53 &amp; AWS Certificate Manager</li>
 <li><strong>CDN / Entry Point:</strong> AWS CloudFront</li>
 <li><strong>File Storage (Buckets):</strong> AWS S3</li>
-<li><strong>Static Frontend &amp; Assets:</strong> S3 storage with CloudFront delivery (private origin and cached)</li>
-<li><strong>Load Balancing:</strong> AWS Network Load Balancer → Nginx Ingress</li>
+<li><strong>Static Frontend &amp; Assets:</strong> S3 storage (private origin and cached) served exclusively through CloudFront</li>
+<li><strong>Load Balancing:</strong> AWS Network Load Balancer → Nginx Ingress
+<ul>
+<li>Note: NLB serves as the AWS-required entry point to the EKS cluster, while Nginx Ingress provides the core routing logic. This architecture reduces costs when scaling (one NLB vs multiple ALBs per service) and enables cloud portability (Nginx works on any Kubernetes cluster).</li>
+</ul>
+</li>
 </ul>
 <h3 id="scaling--high-availability">Scaling &amp; High Availability</h3>
 <ul>
 <li><strong>Horizontal Pod Autoscaler</strong>: API &amp; Worker pods scale based on CPU/memory</li>
-<li><strong>Karpenter</strong>: Rapid EKS node provisioning with On-Demand + Spot instances</li>
+<li><strong>Karpenter</strong>: Rapid EKS node provisioning with On-Demand + Spot instances
+<ul>
+<li>Note: Chosen over Cluster Autoscaler for faster provisioning (seconds vs minutes) and better cost efficiency through optimized node selection.</li>
+</ul>
+</li>
 <li><strong>Multi-AZ Deployments</strong>: RDS &amp; ElastiCache</li>
-<li><strong>Cost Management</strong>: Terraform resource tagging</li>
 </ul>
 <h3 id="observability">Observability</h3>
 <ul>
@@ -165,7 +172,11 @@ Sorry, your browser doesn't support embedded videos.
 <li><strong>Pod Security Admission (PSA)</strong>: Enforces restricted Pod Security Standards on application workloads</li>
 <li><strong>Network Policies</strong>: Kubernetes restricts pod ingress/egress</li>
 <li><strong>Pod Identity</strong>: EKS Pod Identity grants fine-grained permissions (e.g., specific S3 access)</li>
-<li><strong>Secrets Management</strong>: AWS Secrets Manager with External Secrets Operator (ESO)</li>
+<li><strong>Secrets Management</strong>: AWS Secrets Manager with External Secrets Operator (ESO)
+<ul>
+<li>Note: ESO automatically syncs secrets from AWS Secrets Manager into Kubernetes, enabling GitOps workflows without storing sensitive values in Git.</li>
+</ul>
+</li>
 </ul>
 <h3 id="why-this-infrastructure-design">Why This Infrastructure Design</h3>
 <ul>
